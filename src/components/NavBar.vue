@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
 
-const open = ref(false)
+// 右上角 doc 风格按钮：控制全屏展开菜单
+const menuOpen = ref(false)
 
 const navItems = [
   { label: '首页', href: '#home' },
@@ -18,6 +19,20 @@ const navItems = [
   { label: '技能', href: '#skills' },
   { label: '联系', href: '#contact' },
 ]
+
+function toggleMenu() {
+  menuOpen.value = !menuOpen.value
+  document.body.style.overflow = menuOpen.value ? 'hidden' : ''
+}
+
+function closeMenu() {
+  menuOpen.value = false
+  document.body.style.overflow = ''
+}
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
+})
 </script>
 
 <template>
@@ -41,7 +56,6 @@ const navItems = [
             </svg>
           </a>
 
-          <!-- 下拉面板 -->
           <div v-if="item.children" class="drop-panel">
             <a v-for="child in item.children" :key="child.label" class="drop-item" :href="child.href">
               <span class="drop-icon"></span>
@@ -51,24 +65,30 @@ const navItems = [
         </li>
       </ul>
 
-      <!-- 汉堡菜单 -->
-      <button class="burger" :class="{ 'is-open': open }" aria-label="菜单" @click="open = !open">
-        <span></span><span></span><span></span>
+      <!-- doc 风格右上角按钮（SideBar）：两条线 + 八边形描边，点击变 X -->
+      <button
+        class="doc-btn"
+        :class="{ 'is-active': menuOpen }"
+        aria-label="菜单"
+        @click="toggleMenu"
+      >
+        <svg class="doc-btn-ring" viewBox="0 0 30 30" aria-hidden="true">
+          <polygon points="8,1 22,1 29,8 29,22 22,29 8,29 1,22 1,8 " />
+        </svg>
+        <span class="doc-btn-inner"></span>
       </button>
     </div>
 
-    <!-- 移动端抽屉 -->
-    <transition name="drawer">
-      <div v-if="open" class="mobile-menu">
-        <a
-          v-for="item in navItems"
-          :key="item.label"
-          :href="item.href"
-          class="mobile-link"
-          @click="open = false"
-        >
-          {{ item.label }}
-        </a>
+    <!-- doc 风格全屏展开菜单（斜切滑入） -->
+    <transition name="unfold">
+      <div v-if="menuOpen" class="unfold">
+        <div class="unfold-options">
+          <ul>
+            <li v-for="item in navItems" :key="item.label">
+              <a :href="item.href" @click="closeMenu"><span>{{ item.label }}</span></a>
+            </li>
+          </ul>
+        </div>
       </div>
     </transition>
   </header>
@@ -95,6 +115,7 @@ const navItems = [
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
 }
 
 /* ===== Logo ===== */
@@ -102,6 +123,7 @@ const navItems = [
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 .logo svg {
   width: 34px;
@@ -126,6 +148,7 @@ const navItems = [
   display: flex;
   align-items: stretch;
   height: 100%;
+  margin-left: auto;
 }
 
 .nav-item {
@@ -215,79 +238,175 @@ const navItems = [
   box-shadow: 0 0 8px rgba(255, 45, 45, 0.8);
 }
 
-/* ===== 汉堡菜单 ===== */
-.burger {
-  display: none;
-  flex-direction: column;
+/* ===== doc 风格右上角按钮（复刻 doc 的 SideBar） ===== */
+.doc-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 5px;
-  width: 40px;
-  height: 40px;
   background: transparent;
-  border: 1px solid var(--border-light);
+  border: none;
   cursor: pointer;
-  padding: 8px;
-}
-.burger span {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background: var(--text);
-  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.2s;
-}
-.burger.is-open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-.burger.is-open span:nth-child(2) {
-  opacity: 0;
-}
-.burger.is-open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  flex-shrink: 0;
+  padding: 0;
 }
 
-/* ===== 移动端抽屉 ===== */
-.mobile-menu {
+.doc-btn-inner {
+  position: absolute;
+  left: 8px;
+}
+
+/* 两条线：初始间距 8px */
+.doc-btn-inner::before,
+.doc-btn-inner::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  width: 26px;
+  background: var(--text);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.doc-btn-inner::before {
+  margin-top: -3px;
+}
+.doc-btn-inner::after {
+  margin-top: 5px;
+}
+
+/* hover：两条线展开 */
+.doc-btn:hover .doc-btn-inner::before {
+  margin-top: -10px;
+}
+.doc-btn:hover .doc-btn-inner::after {
+  margin-top: 10px;
+}
+
+/* active：两条线旋转成 X */
+.doc-btn.is-active .doc-btn-inner::before {
+  margin-top: -10px;
+  transform-origin: 0 50%;
+  width: 28px;
+  transform: translateX(3px) rotate(45deg);
+}
+.doc-btn.is-active .doc-btn-inner::after {
+  margin-top: 10px;
+  transform-origin: 0 50%;
+  width: 28px;
+  transform: translateX(3px) rotate(-45deg);
+}
+
+/* 八边形描边：active 时显现并流动 */
+.doc-btn-ring {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.doc-btn-ring polygon {
+  stroke: var(--red-bright);
+  stroke-width: 1;
+  stroke-dasharray: 55, 40;
+  fill: none;
+  transition: stroke-dashoffset 0.3s ease;
+}
+.doc-btn.is-active .doc-btn-ring {
+  opacity: 1;
+}
+.doc-btn.is-active .doc-btn-ring polygon {
+  stroke-dashoffset: -15;
+}
+
+/* ===== doc 风格全屏展开菜单（斜切滑入/滑出） ===== */
+.unfold {
   position: fixed;
-  top: var(--nav-h);
+  top: 0;
   left: 0;
-  right: 0;
-  background: rgba(14, 14, 18, 0.98);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 0;
+  width: 100%;
+  height: 150%;
+  background: var(--red);
+  transform-origin: 0 0;
+  z-index: 400;
+  overflow: hidden;
+}
+
+.unfold-options {
+  height: 100vh;
+  display: grid;
+  position: relative;
+  padding: 100px 50px;
+  grid-template-rows: repeat(5, 1fr);
+  grid-template-columns: repeat(12, 1fr);
+  align-items: start;
+  z-index: 2;
+}
+
+.unfold-options ul {
+  grid-row-start: 4;
+  grid-column-start: 2;
+  grid-column-end: span 3;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
-.mobile-link {
-  padding: 15px 8%;
-  font-size: 16px;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-  border-left: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+
+.unfold-options ul a {
+  display: inline-block;
 }
-.mobile-link:hover {
+
+.unfold-options ul span {
+  font-size: clamp(26px, 4.5vw, 50px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 0.3s ease;
+}
+
+/* 整体 hover 时其他项变暗，单项 hover 高亮（对齐 doc） */
+.unfold-options ul:hover a span {
+  color: rgba(255, 255, 255, 0.45);
+}
+.unfold-options ul a:hover span {
   color: #fff;
-  border-left-color: var(--red-bright);
-  background: rgba(225, 6, 0, 0.08);
 }
 
-.drawer-enter-active,
-.drawer-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
+/* 过渡：skewY(-12deg) 斜切，从上滑入 / 向下滑出 */
+.unfold-enter-active {
+  transition-delay: 0.25s;
+  transition: transform 0.4s ease-out;
 }
-.drawer-enter-from,
-.drawer-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
+.unfold-leave-active {
+  transition: transform 0.4s cubic-bezier(0.21, 0.58, 0.74, 0.99);
+}
+.unfold-enter-from {
+  transform: skewY(-12deg) translateY(-100%);
+}
+.unfold-enter-to,
+.unfold-leave-from {
+  transform: skewY(-12deg) translateY(0);
+}
+.unfold-leave-to {
+  transform: skewY(-12deg) translateY(100%);
 }
 
+/* ===== 响应式 ===== */
 @media (max-width: 820px) {
   .nav-list {
     display: none;
   }
-  .burger {
-    display: flex;
+  .unfold-options {
+    grid-template-columns: repeat(6, 1fr);
+    padding: 80px 8%;
+  }
+  .unfold-options ul {
+    grid-column-start: 1;
+    grid-column-end: span 6;
   }
 }
 </style>
+
 
