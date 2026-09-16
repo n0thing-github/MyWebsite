@@ -109,6 +109,8 @@ onBeforeUnmount(() => {
 }
 
 .nav-inner {
+  position: relative;
+  z-index: 2; /* 高于展开菜单，保证按钮始终可点 */
   width: min(1200px, 92%);
   height: 100%;
   margin: 0 auto;
@@ -297,7 +299,7 @@ onBeforeUnmount(() => {
   transform: translateX(3px) rotate(-45deg);
 }
 
-/* 八边形描边：active 时显现并流动 */
+/* 八边形描边：hover 或 active 时显现，缺口绕八边形转圈 */
 .doc-btn-ring {
   position: absolute;
   width: 60px;
@@ -308,16 +310,22 @@ onBeforeUnmount(() => {
 }
 .doc-btn-ring polygon {
   stroke: var(--red-bright);
-  stroke-width: 1;
+  stroke-width: 1.5;
   stroke-dasharray: 55, 40;
   fill: none;
-  transition: stroke-dashoffset 0.3s ease;
 }
+.doc-btn:hover .doc-btn-ring,
 .doc-btn.is-active .doc-btn-ring {
   opacity: 1;
 }
+.doc-btn:hover .doc-btn-ring polygon,
 .doc-btn.is-active .doc-btn-ring polygon {
-  stroke-dashoffset: -15;
+  animation: ring-spin 1.4s linear infinite;
+}
+
+/* 缺口沿八边形周长（约 95）循环滚动，形成转圈效果 */
+@keyframes ring-spin {
+  to { stroke-dashoffset: -95; }
 }
 
 /* ===== doc 风格全屏展开菜单（斜切滑入/滑出） ===== */
@@ -329,7 +337,7 @@ onBeforeUnmount(() => {
   height: 150%;
   background: var(--red);
   transform-origin: 0 0;
-  z-index: 400;
+  z-index: 1; /* 低于 .nav-inner(2)，导航栏和按钮保持可点 */
   overflow: hidden;
 }
 
