@@ -79,18 +79,47 @@ onBeforeUnmount(() => {
       </button>
     </div>
 
-    <!-- doc 风格全屏展开菜单（斜切滑入） -->
-    <transition name="unfold">
-      <div v-if="menuOpen" class="unfold">
-        <div class="unfold-options">
-          <ul>
-            <li v-for="item in navItems" :key="item.label">
-              <a :href="item.href" @click="closeMenu"><span>{{ item.label }}</span></a>
-            </li>
-          </ul>
+    <!-- 遮罩（点击关闭侧边栏） -->
+    <div class="sidebar-mask" :class="{ 'is-open': menuOpen }" @click="closeMenu"></div>
+
+    <!-- 侧边栏（从右侧滑出） -->
+    <aside class="sidebar" :class="{ 'is-open': menuOpen }">
+      <div class="sidebar-head">
+        <span class="sidebar-title">MENU</span>
+        <button class="sidebar-close" aria-label="关闭" @click="closeMenu">×</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a
+          v-for="item in navItems"
+          :key="item.label"
+          :href="item.href"
+          @click="closeMenu"
+        >
+          <span class="sidebar-idx">0{{ navItems.indexOf(item) + 1 }}</span>
+          {{ item.label }}
+        </a>
+      </nav>
+
+      <div class="sidebar-block">
+        <h4 class="sidebar-label">联系</h4>
+        <a class="sidebar-link" href="https://github.com/n0thing-github" target="_blank" rel="noopener">GitHub</a>
+        <a class="sidebar-link" href="mailto:n0thing-github@users.noreply.github.com">Email</a>
+      </div>
+
+      <div class="sidebar-block">
+        <h4 class="sidebar-label">技能</h4>
+        <div class="sidebar-tags">
+          <span>Vue</span>
+          <span>Vite</span>
+          <span>JavaScript</span>
+          <span>CSS</span>
+          <span>Node.js</span>
         </div>
       </div>
-    </transition>
+
+      <p class="sidebar-foot">© 2026 N0THING · Built with Vue 3 + Vite</p>
+    </aside>
   </header>
 </template>
 
@@ -110,7 +139,7 @@ onBeforeUnmount(() => {
 
 .nav-inner {
   position: relative;
-  z-index: 2; /* 高于展开菜单，保证按钮始终可点 */
+  z-index: 3; /* 高于侧边栏和遮罩，保证按钮始终可点 */
   width: min(1200px, 92%);
   height: 100%;
   margin: 0 auto;
@@ -299,7 +328,7 @@ onBeforeUnmount(() => {
   transform: translateX(3px) rotate(-45deg);
 }
 
-/* 八边形描边：hover 或 active 时显现，缺口绕八边形转圈 */
+/* 八边形描边：hover 或 active 时显现，缺口移动一小段（对齐 doc） */
 .doc-btn-ring {
   position: absolute;
   width: 60px;
@@ -310,9 +339,10 @@ onBeforeUnmount(() => {
 }
 .doc-btn-ring polygon {
   stroke: var(--red-bright);
-  stroke-width: 1.5;
+  stroke-width: 1;
   stroke-dasharray: 55, 40;
   fill: none;
+  transition: stroke-dashoffset 0.3s ease;
 }
 .doc-btn:hover .doc-btn-ring,
 .doc-btn.is-active .doc-btn-ring {
@@ -320,99 +350,152 @@ onBeforeUnmount(() => {
 }
 .doc-btn:hover .doc-btn-ring polygon,
 .doc-btn.is-active .doc-btn-ring polygon {
-  animation: ring-spin 1.4s linear infinite;
+  stroke-dashoffset: -15;
 }
 
-/* 缺口沿八边形周长（约 95）循环滚动，形成转圈效果 */
-@keyframes ring-spin {
-  to { stroke-dashoffset: -95; }
+/* ===== 遮罩（点击关闭） ===== */
+.sidebar-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1; /* 低于 .nav-inner(3) */
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s;
+}
+.sidebar-mask.is-open {
+  opacity: 1;
+  visibility: visible;
 }
 
-/* ===== doc 风格全屏展开菜单（斜切滑入/滑出） ===== */
-.unfold {
+/* ===== 侧边栏（从右侧滑出） ===== */
+.sidebar {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 150%;
-  background: var(--red);
-  transform-origin: 0 0;
-  z-index: 1; /* 低于 .nav-inner(2)，导航栏和按钮保持可点 */
-  overflow: hidden;
-}
-
-.unfold-options {
-  height: 100vh;
-  display: grid;
-  position: relative;
-  padding: 100px 50px;
-  grid-template-rows: repeat(5, 1fr);
-  grid-template-columns: repeat(12, 1fr);
-  align-items: start;
-  z-index: 2;
-}
-
-.unfold-options ul {
-  grid-row-start: 4;
-  grid-column-start: 2;
-  grid-column-end: span 3;
+  right: 0;
+  width: min(400px, 88vw);
+  height: 100%;
+  z-index: 2; /* 低于 .nav-inner(3)，按钮浮在其上 */
+  background: #0e0e12;
+  border-left: 1px solid var(--border);
+  padding: calc(var(--nav-h) + 26px) 34px 34px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 26px;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -24px 0 60px rgba(0, 0, 0, 0.5);
+}
+.sidebar.is-open {
+  transform: translateX(0);
 }
 
-.unfold-options ul a {
-  display: inline-block;
+/* 头部 */
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+.sidebar-close {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.sidebar-close:hover {
+  border-color: var(--red-bright);
+  color: var(--red-bright);
 }
 
-.unfold-options ul span {
-  font-size: clamp(26px, 4.5vw, 50px);
-  font-weight: 800;
-  text-transform: uppercase;
+/* 导航 */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s ease, padding-left 0.3s ease;
+}
+.sidebar-nav a:hover {
+  color: var(--red-bright);
+  padding-left: 8px;
+}
+.sidebar-idx {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--red-bright);
+}
+
+/* 区块 */
+.sidebar-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sidebar-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
   letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.78);
-  transition: color 0.3s ease;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.sidebar-link {
+  font-size: 15px;
+  color: var(--text-dim);
+  transition: color 0.2s ease;
+}
+.sidebar-link:hover {
+  color: var(--red-bright);
 }
 
-/* 整体 hover 时其他项变暗，单项 hover 高亮（对齐 doc） */
-.unfold-options ul:hover a span {
-  color: rgba(255, 255, 255, 0.45);
+.sidebar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
-.unfold-options ul a:hover span {
-  color: #fff;
+.sidebar-tags span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-light);
+  color: var(--text-dim);
 }
 
-/* 过渡：skewY(-12deg) 斜切，从上滑入 / 向下滑出 */
-.unfold-enter-active {
-  transition-delay: 0.25s;
-  transition: transform 0.4s ease-out;
-}
-.unfold-leave-active {
-  transition: transform 0.4s cubic-bezier(0.21, 0.58, 0.74, 0.99);
-}
-.unfold-enter-from {
-  transform: skewY(-12deg) translateY(-100%);
-}
-.unfold-enter-to,
-.unfold-leave-from {
-  transform: skewY(-12deg) translateY(0);
-}
-.unfold-leave-to {
-  transform: skewY(-12deg) translateY(100%);
+.sidebar-foot {
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: 12px;
+  color: var(--text-dim);
 }
 
 /* ===== 响应式 ===== */
 @media (max-width: 820px) {
   .nav-list {
     display: none;
-  }
-  .unfold-options {
-    grid-template-columns: repeat(6, 1fr);
-    padding: 80px 8%;
-  }
-  .unfold-options ul {
-    grid-column-start: 1;
-    grid-column-end: span 6;
   }
 }
 </style>
