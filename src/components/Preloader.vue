@@ -4,23 +4,36 @@ import { ref, onMounted } from 'vue'
 const emit = defineEmits(['done'])
 
 const progress = ref(0)
-// loading: 旋转加载中 / reveal: 黑红条纹扫过 / exit: 遮罩退出
+// loading: 旋转加载 / reveal: 左右条纹扫过 / exit: 遮罩退出
 const phase = ref('loading')
+const showCore = ref(true)
+
+const stripes = 8
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
+
   const tick = () => {
-    const inc = Math.random() * 12 + 7
+    if (progress.value >= 100) return
+    const remaining = 100 - progress.value
+    // 最后阶段放慢，让 100% 清晰可见
+    const inc = remaining < 16 ? Math.random() * 4 + 2 : Math.random() * 12 + 7
     progress.value = Math.min(100, progress.value + inc)
+
     if (progress.value >= 100) {
       progress.value = 100
-      phase.value = 'reveal'
+      // 100% 停顿 450ms 后，才开始进场动画
       setTimeout(() => {
-        phase.value = 'exit'
-        setTimeout(() => emit('done'), 750)
-      }, 1000)
+        phase.value = 'reveal'
+        showCore.value = false // 核心通过 transition 淡出并从 DOM 移除
+        // 条纹扫完后再退出遮罩
+        setTimeout(() => {
+          phase.value = 'exit'
+          setTimeout(() => emit('done'), 750)
+        }, 1200)
+      }, 450)
     } else {
-      setTimeout(tick, 120)
+      setTimeout(tick, 110)
     }
   }
   setTimeout(tick, 350)
@@ -29,28 +42,30 @@ onMounted(() => {
 
 <template>
   <div class="preloader" :class="`is-${phase}`" aria-hidden="true">
-    <!-- 黑红斜切条纹（reveal 阶段扫过） -->
+    <!-- 左右交替的红色斜切条纹 -->
     <div class="sweep">
-      <span v-for="i in 6" :key="i" :style="{ '--i': i }"></span>
+      <span v-for="i in stripes" :key="i" :style="{ '--i': i }"></span>
     </div>
 
-    <div class="loader-core">
-      <div class="logo-wrap">
-        <svg class="logo-ring" viewBox="0 0 120 120">
-          <polygon points="60,7 106,34 106,86 60,113 14,86 14,34" />
-        </svg>
-        <span class="logo-letter">M</span>
-      </div>
+    <transition name="core">
+      <div v-if="showCore" class="loader-core">
+        <div class="logo-wrap">
+          <svg class="logo-ring" viewBox="0 0 120 120">
+            <polygon points="60,7 106,34 106,86 60,113 14,86 14,34" />
+          </svg>
+          <span class="logo-letter">M</span>
+        </div>
 
-      <div class="loader-meta">
-        <span class="loader-label">INITIALIZING</span>
-        <span class="loader-percent">{{ Math.floor(progress) }}%</span>
-      </div>
+        <div class="loader-meta">
+          <span class="loader-label">INITIALIZING</span>
+          <span class="loader-percent">{{ Math.floor(progress) }}%</span>
+        </div>
 
-      <div class="progress-track">
-        <div class="progress-bar" :style="{ width: progress + '%' }"></div>
+        <div class="progress-track">
+          <div class="progress-bar" :style="{ width: progress + '%' }"></div>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -72,7 +87,7 @@ onMounted(() => {
   transform: translateY(-100%);
 }
 
-/* ===== 核心：logo + 进度 ===== */
+/* ===== 核心：logo + 进度（淡出后从 DOM 移除，避免回退） ===== */
 .loader-core {
   position: relative;
   z-index: 2;
@@ -80,12 +95,14 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 26px;
-  transition: opacity 0.4s ease, transform 0.5s ease;
 }
 
-.preloader.is-reveal .loader-core {
+.core-leave-active {
+  transition: opacity 0.35s ease, transform 0.45s ease;
+}
+.core-leave-to {
   opacity: 0;
-  transform: scale(1.5);
+  transform: scale(1.45);
 }
 
 .logo-wrap {
@@ -162,7 +179,7 @@ onMounted(() => {
   transition: width 0.15s linear;
 }
 
-/* ===== 黑红斜切条纹 ===== */
+/* ===== 黑红斜切条纹（左右交替扫过） ===== */
 .sweep {
   position: absolute;
   inset: 0;
@@ -172,28 +189,45 @@ onMounted(() => {
 
 .sweep span {
   position: absolute;
+  left: 0;
   top: -10%;
   height: 120%;
-  width: 22vw;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(225, 6, 0, 0.9),
-    transparent
-  );
-  clip-path: polygon(30% 0, 100% 0, 70% 100%, 0 100%);
-  transform: translateX(120vw);
+  width: 36vw;
+  background: linear-gradient(90deg, #8a0f0f, #e10600 50%, #8a0f0f);
+  clip-path: polygon(28% 0, 100% 0, 72% 100%, 0 100%);
   opacity: 0;
 }
 
-.preloader.is-reveal .sweep span {
-  animation: sweep-across 1s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-  animation-delay: calc(var(--i) * 0.07s);
-  opacity: 1;
+/* 奇数：从左扫到右；偶数：从右扫到左 —— 形成「左右左右」交替 */
+.sweep span:nth-child(odd) {
+  transform: translateX(-50vw);
+}
+.sweep span:nth-child(even) {
+  transform: translateX(120vw);
 }
 
-@keyframes sweep-across {
+.preloader.is-reveal .sweep span {
+  opacity: 1;
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--i) * 0.08s);
+}
+.preloader.is-reveal .sweep span:nth-child(odd) {
+  animation-name: sweep-ltr;
+}
+.preloader.is-reveal .sweep span:nth-child(even) {
+  animation-name: sweep-rtl;
+}
+
+@keyframes sweep-ltr {
+  from { transform: translateX(-50vw); }
+  to { transform: translateX(120vw); }
+}
+
+@keyframes sweep-rtl {
   from { transform: translateX(120vw); }
-  to { transform: translateX(-40vw); }
+  to { transform: translateX(-50vw); }
 }
 </style>
+
