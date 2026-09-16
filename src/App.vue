@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 import Preloader from './components/Preloader.vue'
 import NavBar from './components/NavBar.vue'
 import HeroSection from './components/HeroSection.vue'
@@ -9,14 +9,10 @@ import SkillsSection from './components/SkillsSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import SiteFooter from './components/SiteFooter.vue'
 
-const loaded = ref(false)
 let observer = null
 
 function onPreloaderDone() {
-  loaded.value = true
   document.body.style.overflow = ''
-  // 下一帧初始化滚动浮现
-  requestAnimationFrame(() => initObserver())
 }
 
 function initObserver() {
@@ -34,6 +30,11 @@ function initObserver() {
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
 }
 
+onMounted(() => {
+  // 遮罩揭示前就让首屏内容就绪
+  initObserver()
+})
+
 onBeforeUnmount(() => {
   observer?.disconnect()
   document.body.style.overflow = ''
@@ -50,7 +51,7 @@ onBeforeUnmount(() => {
 
   <NavBar />
 
-  <main :class="{ 'is-ready': loaded }">
+  <main>
     <HeroSection />
     <AboutSection />
     <PortfolioSection />
@@ -61,12 +62,3 @@ onBeforeUnmount(() => {
   <SiteFooter />
 </template>
 
-<style scoped>
-main {
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-main.is-ready {
-  opacity: 1;
-}
-</style>

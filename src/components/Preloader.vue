@@ -1,69 +1,48 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import lottie from 'lottie-web'
-import animationData from '../assets/faze-transition.json'
 
 const emit = defineEmits(['done'])
 
-// loading: 旋转加载 / reveal: 播放扫屏 / exit: 遮罩退出
+// loading: 旋转加载 / reveal: 红色斜切从上往下揭示 / done: 移除
 const phase = ref('loading')
 const showCore = ref(true)
-const container = ref(null)
-
-let anim = null
-let revealed = false
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
 
-  // 用 lottie-web 播放 faze 原版扫屏动画（loop: false, 不自动播放）
-  anim = lottie.loadAnimation({
-    container: container.value,
-    renderer: 'svg',
-    loop: false,
-    autoplay: false,
-    animationData,
-    rendererSettings: {
-      preserveAspectRatio: 'none',
-      className: 'lottie-anim',
-    },
-  })
-
-  anim.addEventListener('complete', () => {
-    phase.value = 'exit'
-    setTimeout(() => emit('done'), 750)
-  })
-
-  // 模拟资源加载完成后，logo 淡出 + 播放扫屏
+  // 模拟资源加载完成后，红色斜切从上往下扫，揭示主页
   setTimeout(() => {
-    if (revealed) return
-    revealed = true
     phase.value = 'reveal'
     showCore.value = false
-    anim.play()
+    setTimeout(() => {
+      phase.value = 'done'
+      document.body.style.overflow = ''
+      emit('done')
+    }, 700) // 670ms 揭示动画 + 余量
   }, 2200)
 })
 
 onBeforeUnmount(() => {
-  anim?.destroy()
   document.body.style.overflow = ''
 })
 </script>
 
 <template>
   <div class="preloader" :class="`is-${phase}`" aria-hidden="true">
-    <!-- Lottie 扫屏动画（faze 原版） -->
-    <div ref="container" class="lottie-container"></div>
-
-    <!-- Logo：绕 Y 轴 3D 翻转 -->
-    <transition name="core">
-      <div v-if="showCore" class="loader-core">
-        <div class="logo-wrap">
-          <span class="logo-letter">M</span>
+    <!-- 黑色遮罩（含 logo）：clip-path 从上往下收缩，揭示主页 -->
+    <div class="cover">
+      <transition name="core">
+        <div v-if="showCore" class="loader-core">
+          <div class="logo-wrap">
+            <span class="logo-letter">M</span>
+          </div>
+          <span class="loader-label">INITIALIZING</span>
         </div>
-        <span class="loader-label">INITIALIZING</span>
-      </div>
-    </transition>
+      </transition>
+    </div>
+
+    <!-- 红色斜切块：跟随边界从上往下扫 -->
+    <div class="red-sweep"></div>
   </div>
 </template>
 
@@ -72,36 +51,38 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: #050506;
+  background: transparent;
   overflow: hidden;
-  transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+  pointer-events: none;
 }
 
-/* 退出阶段：整体向上滑出 */
-.preloader.is-exit {
-  transform: translateY(-100%);
+/* 动画完成后移除 */
+.preloader.is-done {
+  display: none;
 }
 
-/* ===== Lottie 扫屏动画容器（z-index 6，位于 logo 下方） ===== */
-.lottie-container {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-}
-.lottie-container :deep(svg) {
-  width: 100%;
-  height: 100%;
-}
-
-/* ===== 核心：logo（z-index 8，位于动画上方） ===== */
-.loader-core {
+/* ===== 黑色遮罩：clip-path 从顶部往下收缩（上往下揭示主页） ===== */
+.cover {
   position: absolute;
   inset: 0;
   z-index: 8;
+  background: #050506;
+  clip-path: polygon(0 0, 100% -12%, 100% 100%, 0 100%);
+  transition: clip-path 0.67s cubic-bezier(0.85, 0, 0.15, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preloader.is-reveal .cover {
+  clip-path: polygon(0 100%, 100% 88%, 100% 100%, 0 100%);
+}
+
+/* ===== 核心：logo（淡出后从 DOM 移除） ===== */
+.loader-core {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 28px;
 }
 
@@ -141,6 +122,24 @@ onBeforeUnmount(() => {
   font-size: 11px;
   letter-spacing: 4px;
   color: var(--text-dim);
+}
+
+/* ===== 红色斜切块：跟随边界从上往下扫 ===== */
+.red-sweep {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 22vh;
+  z-index: 9;
+  background: linear-gradient(180deg, #ed0000, #7a0a0a);
+  transform: translateY(-130%) skewY(-8deg);
+  transform-origin: 0 0;
+  transition: transform 0.67s cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+.preloader.is-reveal .red-sweep {
+  transform: translateY(110vh) skewY(-8deg);
 }
 </style>
 
