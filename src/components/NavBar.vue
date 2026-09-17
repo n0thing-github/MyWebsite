@@ -353,11 +353,14 @@ onBeforeUnmount(() => {
   stroke-dashoffset: -15;
 }
 
-/* ===== 遮罩（点击关闭） ===== */
+/* ===== 遮罩（点击关闭，从导航栏下方覆盖内容区） ===== */
 .sidebar-mask {
   position: fixed;
-  inset: 0;
-  z-index: 1; /* 低于 .nav-inner(3) */
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
   background: rgba(0, 0, 0, 0.62);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
@@ -370,17 +373,18 @@ onBeforeUnmount(() => {
   visibility: visible;
 }
 
-/* ===== 侧边栏（从右侧滑出） ===== */
+/* ===== 侧边栏（从右侧滑出，位于导航栏下方） ===== */
 .sidebar {
   position: fixed;
-  top: 0;
+  top: var(--nav-h);
   right: 0;
   width: min(400px, 88vw);
-  height: 100%;
-  z-index: 2; /* 低于 .nav-inner(3)，按钮浮在其上 */
+  height: calc(100% - var(--nav-h));
+  z-index: 2;
   background: #0e0e12;
   border-left: 1px solid var(--border);
-  padding: calc(var(--nav-h) + 26px) 34px 34px;
+  border-top: 1px solid var(--border);
+  padding: 26px 34px 34px;
   display: flex;
   flex-direction: column;
   gap: 26px;

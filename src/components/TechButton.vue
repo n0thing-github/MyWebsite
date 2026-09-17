@@ -19,8 +19,8 @@ defineProps({
       preserveAspectRatio="none"
       aria-hidden="true"
     >
-      <!-- 斜切角描边 -->
-      <path d="M16 2 H204 L218 16 V44 L204 58 H16 L2 44 V16 Z" />
+      <!-- 斜切角描边（贴边填充） -->
+      <path d="M16 1 H204 L219 16 V44 L204 59 H16 L1 44 V16 Z" />
     </svg>
   </component>
 </template>
@@ -66,6 +66,7 @@ defineProps({
   stroke-width: 1.6;
   stroke-dasharray: 1 0;
   stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
   transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s ease;
 }
 
@@ -88,6 +89,7 @@ defineProps({
   stroke: var(--text-dim);
 }
 .tech-btn.is-ghost:hover .btn-svg path {
+  fill: rgba(0, 229, 255, 0.12);
   stroke: var(--cyan);
   filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.6));
 }
