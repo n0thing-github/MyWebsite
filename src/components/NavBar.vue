@@ -78,7 +78,10 @@ onBeforeUnmount(() => {
         <span class="doc-btn-inner"></span>
       </button>
     </div>
+  </header>
 
+  <!-- Teleport 到 body：脱离 .navbar 的 backdrop-filter containing block，让 fixed 相对视口定位 -->
+  <Teleport to="body">
     <!-- 遮罩（点击关闭侧边栏） -->
     <div class="sidebar-mask" :class="{ 'is-open': menuOpen }" @click="closeMenu"></div>
 
@@ -120,7 +123,7 @@ onBeforeUnmount(() => {
 
       <p class="sidebar-foot">© 2026 N0THING · Built with Vue 3 + Vite</p>
     </aside>
-  </header>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -360,7 +363,7 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 390; /* 高于页面内容，低于 .navbar(500) */
   background: rgba(0, 0, 0, 0.62);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
@@ -380,7 +383,7 @@ onBeforeUnmount(() => {
   right: 0;
   width: min(400px, 88vw);
   height: calc(100% - var(--nav-h));
-  z-index: 2;
+  z-index: 400; /* 高于遮罩，低于 .navbar(500) */
   background: #0e0e12;
   border-left: 1px solid var(--border);
   border-top: 1px solid var(--border);
