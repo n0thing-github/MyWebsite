@@ -3,21 +3,32 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import steam from '../data/steam-games.json'
 
 /**
- * 每张停留时长（毫秒），同时也是分页进度条的 animation-duration。
+ * 每张停留时长（毫秒）
  *
- * 这里刻意不让 JS 计时器管切换：进度条动画的 animationend 才是唯一时钟。
- * 好处是「悬停暂停」只要一句 animation-play-state: paused，
- * 进度条与自动切换天然同步，不会各走各的。
+ * 时钟统一交给 rAF，进度条只是它的可视化输出。
+ * 早期版本把切换完全押在进度条 CSS 动画的 animationend 上，隐患很大：
+ * 标签页切走、合成器降级、动画进入 forwards 填充态，都会让事件不再派发，
+ * 轮播就此永久停摆而且无法自愈。rAF 循环不会丢事件，天然自愈。
  */
 const DURATION = 6000
 
+/**
+ * 单帧最多计入的时长。页面不可见时 rAF 会停摆，回来那一帧的时间差可能是几十秒，
+ * 不限幅就会一次性补满并瞬间跳图。
+ */
+const MAX_FRAME = 64
+
 const games = computed(() => steam.games.filter((g) => g.hero || g.header))
 const idx = ref(0)
-/** 每次切换 +1，用作进度条元素的 key —— 强制重建才能重启动画 */
-const tick = ref(0)
+/** 进度条填充比例 0~1，每帧写入 transform: scaleX() */
+const progress = ref(0)
 const reduce = ref(false)
+/** 鼠标悬停 / 键盘聚焦时暂停计时；移出后从断点继续，不重置 */
+const paused = ref(false)
 
-let fallbackTimer = null
+let rafId = 0
+let elapsed = 0
+let lastTs = 0
 
 function fmtDuration(minutes) {
   if (!minutes) return '未游玩'
@@ -28,27 +39,41 @@ function fmtDuration(minutes) {
 
 const pad = (n) => String(n).padStart(2, '0')
 
+/** 切换（含首帧）：计时归零，从新的一张重新开始 */
 function go(i) {
   const len = games.value.length
   if (!len) return
   idx.value = ((i % len) + len) % len
-  tick.value++
+  elapsed = 0
+  // reduce 模式不播进度，直接把当前项填满，仍能看出停在哪一张
+  progress.value = reduce.value ? 1 : 0
 }
 const next = () => go(idx.value + 1)
 const prev = () => go(idx.value - 1)
 
-/** reduce 模式下进度条动画不跑，改用定时器兜底驱动切换 */
-function scheduleFallback() {
-  clearTimeout(fallbackTimer)
-  fallbackTimer = setTimeout(() => {
-    next()
-    scheduleFallback()
-  }, DURATION)
+/**
+ * 唯一的时钟。掉帧只会让进度条当帧走得略慢（下一帧补上），
+ * 不会像 width 动画那样整段跳，也永远不会因为丢事件而停摆。
+ */
+function frame(ts) {
+  rafId = requestAnimationFrame(frame)
+  // 首帧、以及页面从后台回来时基准都是 0，重新打点
+  if (!lastTs) lastTs = ts
+  const dt = Math.min(ts - lastTs, MAX_FRAME)
+  lastTs = ts
+
+  if (paused.value) return // 悬停/聚焦：不累加，进度条原地冻结
+  elapsed += dt
+  if (elapsed >= DURATION) {
+    next() // next() 内部已归零
+    return
+  }
+  if (!reduce.value) progress.value = elapsed / DURATION
 }
 
-/** 进度条填充完毕 → 该翻下一张 */
-function onFillEnd() {
-  if (!reduce.value) next()
+/** 页面切走时 rAF 停摆，清掉时间基准，回来时不会一次性补跳 */
+function onVisibility() {
+  lastTs = 0
 }
 
 /** library_hero 缺失时退回 header，保证画面不空 */
@@ -59,19 +84,38 @@ function onImgError(event, g) {
 
 onMounted(() => {
   reduce.value = matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (reduce.value) scheduleFallback()
+  if (reduce.value) progress.value = 1
 
-  // 首图之外的大图等浏览器空闲再预取，别和首屏抢带宽
-  const preload = () => games.value.slice(1).forEach((g) => { new Image().src = g.hero })
+  rafId = requestAnimationFrame(frame)
+  document.addEventListener('visibilitychange', onVisibility)
+
+  // 首图之外的大图等浏览器空闲再预取，别和首屏抢带宽与主线程
+  const preload = () =>
+    games.value.slice(1).forEach((g) => {
+      const img = new Image()
+      img.fetchPriority = 'low'
+      img.decoding = 'async'
+      img.src = g.hero
+    })
   if ('requestIdleCallback' in window) requestIdleCallback(preload, { timeout: 3500 })
   else setTimeout(preload, 2000)
 })
 
-onBeforeUnmount(() => clearTimeout(fallbackTimer))
+onBeforeUnmount(() => {
+  cancelAnimationFrame(rafId)
+  document.removeEventListener('visibilitychange', onVisibility)
+})
 </script>
 
 <template>
-  <section id="featured" class="banner" :style="{ '--bn-dur': `${DURATION}ms` }">
+  <section
+    id="featured"
+    class="banner"
+    @mouseenter="paused = true"
+    @mouseleave="paused = false"
+    @focusin="paused = true"
+    @focusout="paused = false"
+  >
     <div class="bn-frame reveal">
       <div class="bn-stage">
         <a
@@ -132,7 +176,11 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
           :aria-label="g.name"
           @click="go(i)"
         >
-          <span v-if="i === idx" :key="tick" class="bn-bullet-inner" @animationend="onFillEnd"></span>
+          <span
+            v-if="i === idx"
+            class="bn-bullet-inner"
+            :style="{ transform: `scaleX(${progress.toFixed(3)})` }"
+          ></span>
         </button>
         <span class="bn-count"><b>{{ pad(idx + 1) }}</b> / {{ pad(games.length) }}</span>
       </div>
@@ -173,6 +221,8 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
   width: 100%;
   aspect-ratio: 3.1 / 1; /* 贴近 library_hero 原图比例，尽量少裁切 */
   overflow: hidden;
+  /* 把 banner 内部的重绘/重排圈在这一层里，别传导到整页布局 */
+  contain: layout paint;
   /* 兜底底色：访客若连不上 Steam CDN，画面也不会塌成纯黑 */
   background:
     radial-gradient(ellipse 80% 130% at 16% 100%, rgba(225, 6, 0, 0.2), transparent 60%),
@@ -275,9 +325,9 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
   color: rgba(236, 236, 240, 0.66);
   padding: 5px 10px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(8, 8, 10, 0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  /* 不用 backdrop-filter：它每帧都要重新模糊底下持续缩放的 Ken Burns 大图，
+     是本组件主要的掉帧来源之一；底下本来就是被压暗的图，纯色加深后观感几乎一致 */
+  background: rgba(8, 8, 10, 0.7);
 }
 
 /* ===== 左右箭头 ===== */
@@ -291,11 +341,9 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
   display: grid;
   place-items: center;
   color: var(--text);
-  background: rgba(10, 10, 12, 0.5);
+  background: rgba(10, 10, 12, 0.66);
   border: 1px solid var(--border-light);
   cursor: pointer;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   transition: color 0.25s, border-color 0.25s, background 0.25s, box-shadow 0.25s;
 }
 .bn-nav svg {
@@ -305,7 +353,8 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
 .bn-nav:hover {
   color: #fff;
   border-color: rgba(225, 6, 0, 0.75);
-  background: rgba(225, 6, 0, 0.2);
+  /* hover 会整体替换底色，去掉 blur 后要稍微加深才压得住底下的图 */
+  background: rgba(225, 6, 0, 0.34);
   box-shadow: 0 0 26px -6px rgba(255, 45, 45, 0.9);
 }
 .bn-nav--prev { left: 18px; }
@@ -348,21 +397,14 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
 }
 .bn-bullet-inner {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 0;
+  inset: 0;
   background: var(--red-bright);
   box-shadow: 0 0 12px rgba(255, 45, 45, 0.85);
-  animation: bnFill var(--bn-dur, 6000ms) linear forwards;
-}
-@keyframes bnFill {
-  from { width: 0; }
-  to { width: 100%; }
-}
-/* 悬停整个 banner：进度条与自动切换一起暂停（同一个时钟） */
-.banner:hover .bn-bullet-inner {
-  animation-play-state: paused;
+  /* 用 transform 而不是 width：只走合成器、不触发布局，
+     主线程再忙也不会掉帧成「一段一段」的填充 */
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
 }
 
 .bn-count {
@@ -404,6 +446,5 @@ onBeforeUnmount(() => clearTimeout(fallbackTimer))
     transition: none;
   }
   .bn-slide.is-on img { transform: none; }
-  .bn-bullet-inner { animation: none; }
 }
 </style>
