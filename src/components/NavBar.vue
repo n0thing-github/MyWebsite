@@ -17,6 +17,7 @@ const navItems = [
     ],
   },
   { label: '技能', href: '#skills' },
+  { label: '游戏', href: '#steam' },
   { label: '联系', href: '#contact' },
 ]
 
@@ -134,10 +135,46 @@ onBeforeUnmount(() => {
   right: 0;
   z-index: 500;
   height: var(--nav-h);
-  background: rgba(10, 10, 12, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border);
+  /* 比 body(--bg #0a0a0c) 更亮的玻璃面板：自上而下由 #1c1c23 渐隐，避免与背景糊在一起 */
+  background: linear-gradient(180deg, rgba(30, 30, 38, 0.95) 0%, rgba(14, 14, 18, 0.9) 100%);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border-bottom: 1px solid rgba(225, 6, 0, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 16px 48px rgba(0, 0, 0, 0.75),
+    0 34px 70px -36px rgba(225, 6, 0, 0.55);
+}
+
+/* 底部流动的红色能量线（导航栏与内容区的分界标识） */
+.navbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(225, 6, 0, 0.75) 16%,
+    var(--red-bright) 50%,
+    rgba(225, 6, 0, 0.75) 84%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  box-shadow: 0 0 16px rgba(255, 45, 45, 0.6);
+  animation: navFlow 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes navFlow {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 .nav-inner {
@@ -162,6 +199,7 @@ onBeforeUnmount(() => {
 .logo svg {
   width: 34px;
   height: 34px;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
 }
 .logo svg polygon {
   fill: none;
@@ -175,6 +213,18 @@ onBeforeUnmount(() => {
   font-size: 17px;
   letter-spacing: 1px;
   text-transform: uppercase;
+  transition: color 0.3s ease, text-shadow 0.3s ease, letter-spacing 0.4s ease;
+}
+
+/* Logo hover：六边形旋转半圈 + 整体红光增亮 */
+.logo:hover svg {
+  transform: rotate(180deg);
+  filter: drop-shadow(0 0 14px rgba(255, 45, 45, 0.95));
+}
+.logo:hover .logo-text {
+  color: #fff;
+  letter-spacing: 2.5px;
+  text-shadow: 0 0 16px rgba(255, 45, 45, 0.75);
 }
 
 /* ===== 导航项（RSI 斜切角标签） ===== */
@@ -192,6 +242,7 @@ onBeforeUnmount(() => {
 }
 
 .nav-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -202,23 +253,71 @@ onBeforeUnmount(() => {
   margin: 0 3px;
   clip-path: polygon(0 38%, 12% 0, 100% 0, 100% 100%, 0 100%);
   background: transparent;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: color 0.25s ease, transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.32s ease;
+}
+
+/* 文字与箭头抬到充能层之上（否则绝对定位伪元素会盖住文字） */
+.nav-link > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ① 淡红能量自下而上充能，沿 clip-path 斜切形状生长 */
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(225, 6, 0, 0.16) 0%, rgba(225, 6, 0, 0.46) 100%);
+  transform: translateY(101%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ② 底部亮红能量线，从左向右拉伸 */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--red-bright);
+  box-shadow: 0 0 14px 4px rgba(255, 45, 45, 0.75);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-link:hover,
 .nav-item.has-drop:hover .nav-link {
-  background: rgba(225, 6, 0, 0.14);
   color: #fff;
-  border-radius: 6px 2px 0 0;
+  /* ③ 白热文字 + 红色外溢光 */
+  text-shadow: 0 0 14px rgba(255, 45, 45, 0.9), 0 0 4px rgba(255, 255, 255, 0.5);
+  /* ④ 斜切形状内部的红色光晕（inset 不会被 clip-path 裁掉） */
+  box-shadow: inset 0 0 22px rgba(225, 6, 0, 0.55);
+  /* ⑤ 轻微上浮 */
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::before,
+.nav-item.has-drop:hover .nav-link::before {
+  transform: translateY(0);
+}
+
+.nav-link:hover::after,
+.nav-item.has-drop:hover .nav-link::after {
+  transform: scaleX(1);
 }
 
 .arrow {
   width: 14px;
   height: 14px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, color 0.25s ease, filter 0.3s ease;
 }
 .nav-item.has-drop:hover .arrow {
   transform: rotate(180deg);
+  color: var(--red-bright);
+  filter: drop-shadow(0 0 7px rgba(255, 45, 45, 0.95));
 }
 
 /* ===== 下拉面板 ===== */
@@ -228,12 +327,15 @@ onBeforeUnmount(() => {
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   min-width: 210px;
-  background: #121216;
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #17171d 0%, #101015 100%);
+  border: 1px solid var(--border-light);
   border-top: 2px solid var(--red);
   padding: 8px;
   opacity: 0;
   visibility: hidden;
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.8),
+    0 0 34px -12px rgba(225, 6, 0, 0.6);
   transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
   z-index: 600;
 }
@@ -245,18 +347,39 @@ onBeforeUnmount(() => {
 }
 
 .drop-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 11px 14px;
   font-size: 14px;
   color: var(--text-dim);
-  transition: color 0.2s ease, background 0.2s ease;
+  overflow: hidden;
+  transition: color 0.2s ease, background 0.2s ease, padding-left 0.28s ease;
+}
+
+/* 左侧红色能量条：hover 时上下张开 */
+.drop-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--red-bright);
+  box-shadow: 0 0 10px rgba(255, 45, 45, 0.9);
+  transform: scaleY(0);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .drop-item:hover {
   color: #fff;
-  background: rgba(225, 6, 0, 0.1);
+  background: rgba(225, 6, 0, 0.12);
+  padding-left: 18px;
+  text-shadow: 0 0 12px rgba(255, 45, 45, 0.8);
+}
+.drop-item:hover::before {
+  transform: scaleY(1);
 }
 
 .drop-icon {
