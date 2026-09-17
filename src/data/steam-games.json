@@ -1,0 +1,65 @@
+{
+  "_meta": {
+    "steamId": "76561198991168446",
+    "personaName": "JD Vance",
+    "avatar": "https://avatars.akamai.steamstatic.com/af6a683a6b239c01e7d3c9ce9b67814286e42a81_full.jpg",
+    "profile": "https://steamcommunity.com/profiles/76561198991168446",
+    "updated": "2026-09-17T16:20:44.561Z",
+    "count": 5,
+    "sample": false
+  },
+  "totalMinutes": 229291,
+  "recentMinutes": 405,
+  "games": [
+    {
+      "appid": 730,
+      "name": "Counter-Strike 2",
+      "minutes": 225392,
+      "twoWeeksMinutes": 405,
+      "lastPlayed": 1789309826,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg",
+      "header": "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg",
+      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg"
+    },
+    {
+      "appid": 431960,
+      "name": "Wallpaper Engine",
+      "minutes": 1679,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1684386447,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/431960/72edaed9d748c6cf7397ffb1c83f0b837b9ebd9d.jpg",
+      "header": "https://cdn.akamai.steamstatic.com/steam/apps/431960/header.jpg",
+      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/431960/library_hero.jpg"
+    },
+    {
+      "appid": 264710,
+      "name": "Subnautica",
+      "minutes": 1473,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1756565854,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/264710/8a14ceef6e230330a916d7a6324b8c52d464d569.jpg",
+      "header": "https://cdn.akamai.steamstatic.com/steam/apps/264710/header.jpg",
+      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/264710/library_hero.jpg"
+    },
+    {
+      "appid": 1366540,
+      "name": "Dyson Sphere Program",
+      "minutes": 621,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1745573264,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1366540/55fa75b8e6586427da47f58f320e975e990a460b.jpg",
+      "header": "https://cdn.akamai.steamstatic.com/steam/apps/1366540/header.jpg",
+      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/1366540/library_hero.jpg"
+    },
+    {
+      "appid": 477160,
+      "name": "Human Fall Flat",
+      "minutes": 126,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1615911789,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/477160/15c6f6a4d69633a63ee410b24a2417f16d803b06.jpg",
+      "header": "https://cdn.akamai.steamstatic.com/steam/apps/477160/header.jpg",
+      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/477160/library_hero.jpg"
+    }
+  ]
+}

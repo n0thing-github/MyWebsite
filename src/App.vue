@@ -1,11 +1,14 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue'
+import BackdropFX from './components/BackdropFX.vue'
 import Preloader from './components/Preloader.vue'
 import NavBar from './components/NavBar.vue'
 import HeroSection from './components/HeroSection.vue'
+import GameBanner from './components/GameBanner.vue'
 import AboutSection from './components/AboutSection.vue'
 import PortfolioSection from './components/PortfolioSection.vue'
 import SkillsSection from './components/SkillsSection.vue'
+import SteamSection from './components/SteamSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import SiteFooter from './components/SiteFooter.vue'
 
@@ -42,7 +45,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- 全局背景装饰 -->
+  <!-- 全局背景装饰：矢量平铺层 → 网格层 → 光晕层，由深到浅叠加 -->
+  <BackdropFX />
   <div class="grid-bg"></div>
   <div class="glow-red" style="top: -100px; right: -140px"></div>
   <div class="glow-red" style="bottom: -180px; left: -160px; opacity: 0.55"></div>
@@ -53,9 +57,11 @@ onBeforeUnmount(() => {
 
   <main>
     <HeroSection />
+    <GameBanner />
     <AboutSection />
     <PortfolioSection />
     <SkillsSection />
+    <SteamSection />
     <ContactSection />
   </main>
 
