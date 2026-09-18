@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 
 // 右上角 doc 风格按钮：控制全屏展开菜单
 const menuOpen = ref(false)
@@ -21,18 +21,25 @@ const navItems = [
   { label: '联系', href: '#contact' },
 ]
 
+// 滚动锁：不再写 body 的 inline style（iOS Safari 对 body{overflow:hidden} 不生效，
+// 而且会和 Preloader 的 inline overflow 互相覆盖），改为在 <html> 上挂 class，由 CSS 同时锁 html/body。
+function syncScrollLock(open) {
+  document.documentElement.classList.toggle('menu-open', open)
+}
+
+watch(menuOpen, syncScrollLock)
+syncScrollLock(menuOpen.value) // 首次对齐，避免残留的锁定状态
+
 function toggleMenu() {
   menuOpen.value = !menuOpen.value
-  document.body.style.overflow = menuOpen.value ? 'hidden' : ''
 }
 
 function closeMenu() {
   menuOpen.value = false
-  document.body.style.overflow = ''
 }
 
 onBeforeUnmount(() => {
-  document.body.style.overflow = ''
+  syncScrollLock(false)
 })
 </script>
 
@@ -408,6 +415,12 @@ onBeforeUnmount(() => {
   cursor: pointer;
   flex-shrink: 0;
   padding: 0;
+  /* iOS Safari 加固：touch-action:manipulation 关掉「双击缩放」。
+     真机上快速第二次点按会被 Safari 的双击缩放判定吞掉（桌面 CDP 触摸模拟不会触发这个判定），
+     一旦误触发缩放，视觉视口被放大+偏移，同一屏幕坐标映射到不同布局坐标，会点到按钮以外的地方。 */
+  touch-action: manipulation;
+  /* 去掉 iOS 点击时的灰色高亮块，保持既有视觉风格 */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .doc-btn-inner {
@@ -432,12 +445,17 @@ onBeforeUnmount(() => {
   margin-top: 5px;
 }
 
-/* hover：两条线展开 */
-.doc-btn:hover .doc-btn-inner::before {
-  margin-top: -10px;
-}
-.doc-btn:hover .doc-btn-inner::after {
-  margin-top: 10px;
+/* hover：两条线展开
+   iOS 触摸后 :hover 会一直「粘」在元素上（sticky hover），松手后按钮会停在 hover 展开态，
+   视觉上像菜单没恢复。用 @media (hover: hover) 只在真正支持指针悬停的设备上生效，
+   触摸设备的状态一律由 .is-active 表达。 */
+@media (hover: hover) {
+  .doc-btn:hover .doc-btn-inner::before {
+    margin-top: -10px;
+  }
+  .doc-btn:hover .doc-btn-inner::after {
+    margin-top: 10px;
+  }
 }
 
 /* active：两条线旋转成 X */
@@ -470,13 +488,21 @@ onBeforeUnmount(() => {
   fill: none;
   transition: stroke-dashoffset 0.3s ease;
 }
-.doc-btn:hover .doc-btn-ring,
 .doc-btn.is-active .doc-btn-ring {
   opacity: 1;
 }
-.doc-btn:hover .doc-btn-ring polygon,
 .doc-btn.is-active .doc-btn-ring polygon {
   stroke-dashoffset: -15;
+}
+/* hover 版同上：不放进 @media (hover: hover) 的话，iOS 上关闭后八边形描边会残留，
+   看起来仍然像「展开中」 */
+@media (hover: hover) {
+  .doc-btn:hover .doc-btn-ring {
+    opacity: 1;
+  }
+  .doc-btn:hover .doc-btn-ring polygon {
+    stroke-dashoffset: -15;
+  }
 }
 
 /* ===== 遮罩（点击关闭，从导航栏下方覆盖内容区） ===== */
@@ -490,6 +516,8 @@ onBeforeUnmount(() => {
   background: rgba(0, 0, 0, 0.62);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  /* 点遮罩关闭同样是高频连点操作，去掉双击缩放判定 */
+  touch-action: manipulation;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.35s ease, visibility 0.35s;
@@ -515,6 +543,9 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 26px;
   overflow-y: auto;
+  /* iOS：禁止滚动链（滚到侧边栏底部时不要带动后面的页面橡皮筋） */
+  overscroll-behavior: contain;
+  touch-action: manipulation;
   transform: translateX(100%);
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: -24px 0 60px rgba(0, 0, 0, 0.5);
@@ -547,10 +578,14 @@ onBeforeUnmount(() => {
   line-height: 1;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.sidebar-close:hover {
-  border-color: var(--red-bright);
-  color: var(--red-bright);
+@media (hover: hover) {
+  .sidebar-close:hover {
+    border-color: var(--red-bright);
+    color: var(--red-bright);
+  }
 }
 
 /* 导航 */
@@ -569,10 +604,15 @@ onBeforeUnmount(() => {
   color: var(--text);
   border-bottom: 1px solid var(--border);
   transition: color 0.2s ease, padding-left 0.3s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.sidebar-nav a:hover {
-  color: var(--red-bright);
-  padding-left: 8px;
+/* iOS sticky hover：不包起来的话，点过的菜单项会一直保持高亮/缩进 */
+@media (hover: hover) {
+  .sidebar-nav a:hover {
+    color: var(--red-bright);
+    padding-left: 8px;
+  }
 }
 .sidebar-idx {
   font-family: var(--font-mono);
@@ -598,8 +638,10 @@ onBeforeUnmount(() => {
   color: var(--text-dim);
   transition: color 0.2s ease;
 }
-.sidebar-link:hover {
-  color: var(--red-bright);
+@media (hover: hover) {
+  .sidebar-link:hover {
+    color: var(--red-bright);
+  }
 }
 
 .sidebar-tags {
@@ -620,6 +662,17 @@ onBeforeUnmount(() => {
   padding-top: 20px;
   font-size: 12px;
   color: var(--text-dim);
+}
+
+/* ===== 滚动锁（iOS 友好：同时锁 html 与 body） =====
+   iOS Safari 对 body{overflow:hidden} 基本无效，必须锁 html；
+   用 <html class="menu-open"> 集中控制，避免 NavBar / Preloader / App 多处写 inline style 互相覆盖。 */
+:global(html.menu-open) {
+  overflow: hidden;
+}
+:global(html.menu-open body) {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 /* ===== 响应式 ===== */

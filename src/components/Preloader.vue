@@ -11,6 +11,52 @@ const showCore = ref(true)
 const container = ref(null)
 
 let anim = null
+let revealTimer = null
+let revealFallbackTimer = null
+let bootFallbackTimer = null
+
+// 时序常量
+const REVEAL_DELAY = 2200 // 模拟资源加载耗时后开始反向播放揭示主页
+const REVEAL_FALLBACK = 2500 // reveal 开始后若 complete 事件丢失，强制收尾
+const BOOT_FALLBACK = 6000 // 连 loading 阶段都卡住时的最终放行时间
+
+function clearTimer(timer) {
+  if (timer) clearTimeout(timer)
+  return null
+}
+
+// 幂等收尾：无论走 Lottie 的 complete 还是兜底定时器，都只执行一次
+function finish() {
+  revealTimer = clearTimer(revealTimer)
+  revealFallbackTimer = clearTimer(revealFallbackTimer)
+  bootFallbackTimer = clearTimer(bootFallbackTimer)
+  if (phase.value === 'done') return
+  phase.value = 'done'
+  document.body.style.overflow = ''
+  emit('done')
+}
+
+// 反向播放：遮罩从上往下收缩揭示主页
+function startReveal() {
+  if (phase.value !== 'loading') return
+  phase.value = 'reveal'
+  showCore.value = false
+
+  const duration = anim ? anim.getDuration(true) : 0
+  if (!duration) {
+    // 动画数据不可用：直接收尾，绝不把页面锁在遮罩后面
+    finish()
+    return
+  }
+
+  anim.setDirection(-1)
+  anim.goToAndPlay(duration, true)
+
+  // 兜底：iOS 上 requestAnimationFrame 会在切后台 / 低电量模式被暂停，Lottie 的 complete
+  // 事件可能永远不来，此时透明的 .preloader 会一直盖住整页吞掉所有点击（移动端菜单
+  // 点不开 / 关不掉的典型残留成因）。这里无论动画是否播完，到点都强制收尾。
+  revealFallbackTimer = setTimeout(finish, REVEAL_FALLBACK)
+}
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
@@ -34,21 +80,19 @@ onMounted(() => {
 
   anim.addEventListener('complete', () => {
     // 反向播放结束：遮罩已收缩，主页完全露出
-    phase.value = 'done'
-    document.body.style.overflow = ''
-    emit('done')
+    finish()
   })
 
   // 模拟资源加载完成后：反向播放，遮罩从上往下收缩揭示主页
-  setTimeout(() => {
-    phase.value = 'reveal'
-    showCore.value = false
-    anim.setDirection(-1)
-    anim.goToAndPlay(anim.getDuration(true), true)
-  }, 2200)
+  revealTimer = setTimeout(startReveal, REVEAL_DELAY)
+  // 最终兜底：Lottie 加载/渲染失败时也要放行页面
+  bootFallbackTimer = setTimeout(finish, BOOT_FALLBACK)
 })
 
 onBeforeUnmount(() => {
+  revealTimer = clearTimer(revealTimer)
+  revealFallbackTimer = clearTimer(revealFallbackTimer)
+  bootFallbackTimer = clearTimer(bootFallbackTimer)
   anim?.destroy()
   document.body.style.overflow = ''
 })
@@ -84,11 +128,14 @@ onBeforeUnmount(() => {
 /* reveal 阶段：背景过渡透明，由 Lottie 黑色 shape 收缩揭示主页 */
 .preloader.is-reveal {
   background: transparent;
+  /* 兜底：若 complete 事件丢失导致遮罩收不回去，也绝不让这层透明遮罩吞掉整页点击 */
+  pointer-events: none;
 }
 
 /* 动画完成后移除 */
 .preloader.is-done {
   display: none;
+  pointer-events: none;
 }
 
 /* ===== Lottie 动画容器（z-index 6，位于 logo 下方） ===== */
