@@ -57,12 +57,24 @@ const API_KEY = process.env.STEAM_API_KEY || process.argv[2]
 
 /* 图片地址自己拼：steamapi 的 iconURL getter 指向已停用的
    steamcdn-a.akamaihd.net，而 icon 为空时它会拼出 "undefined.jpg"。
-   这里统一用官方现用域名，与站点已有数据保持一致的风格。 */
-const ICON_BASE = 'https://media.steampowered.com/steamcommunity/public/images/apps'
-/* 小图标之外的官方图都走这个域名。注意别用 cdn.cloudflare.steamstatic.com
-   —— 国内加速器的分流规则常把它和 api.steampowered.com 一起漏掉
-   （ECONNRESET），实测 cdn.akamai.steamstatic.com 同路径完全可达。 */
-const APP_CDN = 'https://cdn.akamai.steamstatic.com/steam/apps'
+   这里统一用官方现用域名（与 Steam 商店页同款），与站点已有数据保持一致的风格。
+
+   域名实测（2026-09-19，本机 + 系统代理 127.0.0.1:7890，curl 逐个验证）：
+     · cdn.akamai.steamstatic.com   → 000（连接被重置），DNS 能解析
+     · media.steampowered.com       → 000
+     · cdn.cloudflare.steamstatic.com → 200，且以下三条路径全部可达：
+         /steam/apps/<appid>/header.jpg
+         /steam/apps/<appid>/library_hero.jpg
+         /steamcommunity/public/images/apps/<appid>/<hash>.jpg
+   因此小图标与头图共用 cloudflare 这一个域名即可全覆盖。
+   若某天你所在网络恰好相反（加速器把 cloudflare 域名漏掉），
+   把下面的 CDN_HOST 换回 'https://cdn.akamai.steamstatic.com'（图标则需
+   另配 'https://media.steampowered.com'）即可。 */
+const CDN_HOST = 'https://cdn.cloudflare.steamstatic.com'
+const ICON_BASE = `${CDN_HOST}/steamcommunity/public/images/apps`
+const APP_CDN = `${CDN_HOST}/steam/apps`
+/* 头像仍走官方独立域名：cdn.cloudflare 前缀会 301 回它，绕不过去。
+   国内网络可能加载失败，前端 SteamSection.vue 已做静默降级，不影响昵称文字。 */
 const AVATAR_BASE = 'https://avatars.akamai.steamstatic.com'
 
 /* Steam Web API 端点：国内直连 api.steampowered.com 不通，而加速器的分流

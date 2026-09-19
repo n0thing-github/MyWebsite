@@ -71,6 +71,11 @@ function onIconError(event) {
   img.src = img.dataset.header
 }
 
+/* ---------- 头像域名在部分网络不可达：静默隐藏，避免出现碎图图标（昵称文字保留） ---------- */
+function onAvatarError(event) {
+  event.target.style.display = 'none'
+}
+
 /* ---------- 统计数字滚动 ---------- */
 const finalStats = {
   count: steam._meta.count,
@@ -174,7 +179,13 @@ onBeforeUnmount(() => {
         </div>
         <a class="stat stat-link" :href="steam._meta.profile" target="_blank" rel="noopener">
           <span class="stat-num stat-num-text">
-            <img v-if="steam._meta.avatar" class="stat-avatar" :src="steam._meta.avatar" alt="" />
+            <img
+              v-if="steam._meta.avatar"
+              class="stat-avatar"
+              :src="steam._meta.avatar"
+              alt=""
+              @error="onAvatarError"
+            />
             {{ steam._meta.personaName || 'Steam 主页' }}
           </span>
           <span class="stat-label">查看主页 ↗</span>

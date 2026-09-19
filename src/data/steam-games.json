@@ -4,22 +4,222 @@
     "personaName": "JD Vance",
     "avatar": "https://avatars.akamai.steamstatic.com/af6a683a6b239c01e7d3c9ce9b67814286e42a81_full.jpg",
     "profile": "https://steamcommunity.com/profiles/76561198991168446",
-    "updated": "2026-09-17T16:20:44.561Z",
-    "count": 5,
+    "updated": "2026-09-19T12:49:24.757Z",
+    "count": 106,
     "sample": false
   },
-  "totalMinutes": 229291,
-  "recentMinutes": 405,
+  "totalMinutes": 389748,
+  "recentMinutes": 2870,
   "games": [
     {
       "appid": 730,
       "name": "Counter-Strike 2",
-      "minutes": 225392,
-      "twoWeeksMinutes": 405,
-      "lastPlayed": 1789309826,
-      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg",
-      "header": "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg",
-      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg"
+      "minutes": 225633,
+      "twoWeeksMinutes": 646,
+      "lastPlayed": 1789815073,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/library_hero.jpg"
+    },
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "minutes": 30702,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1748078493,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/library_hero.jpg"
+    },
+    {
+      "appid": 271590,
+      "name": "Grand Theft Auto V Legacy",
+      "minutes": 19776,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1787724893,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/271590/1e72f87eb927fa1485e68aefaff23c7fd7178251.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_hero.jpg"
+    },
+    {
+      "appid": 1174180,
+      "name": "Red Dead Redemption 2",
+      "minutes": 13918,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1786989949,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1174180/5106abd9c1187a97f23295a0ba9470c94804ec6c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/library_hero.jpg"
+    },
+    {
+      "appid": 1238810,
+      "name": "Battlefield™ V",
+      "minutes": 11574,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1719396983,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1238810/23ded6a957b5ec7525679c2e7bdac90c0653dbc8.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1238810/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1238810/library_hero.jpg"
+    },
+    {
+      "appid": 1938090,
+      "name": "Call of Duty®",
+      "minutes": 8169,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1716028246,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1938090/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1938090/library_hero.jpg"
+    },
+    {
+      "appid": 107410,
+      "name": "Arma 3",
+      "minutes": 7513,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1751809090,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/107410/3212af52faf994c558bd622cb0f360c1ef295a6b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/107410/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/107410/library_hero.jpg"
+    },
+    {
+      "appid": 1238840,
+      "name": "Battlefield™ 1",
+      "minutes": 6224,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1722417884,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1238840/325c78f6940b57a43b65468d2dc10e22601b0ec5.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1238840/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1238840/library_hero.jpg"
+    },
+    {
+      "appid": 916440,
+      "name": "Anno 1800",
+      "minutes": 5531,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1787582762,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/916440/cf7c754267856d5a1b36614855c52867daf72186.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/916440/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/916440/library_hero.jpg"
+    },
+    {
+      "appid": 1086940,
+      "name": "Baldur's Gate 3",
+      "minutes": 5375,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1784878307,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1086940/d866cae7ea1e471fdbc206287111f1b642373bd9.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/library_hero.jpg"
+    },
+    {
+      "appid": 1237970,
+      "name": "Titanfall® 2",
+      "minutes": 4636,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1747409954,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1237970/d73c7e572859bd7490947d1aeab5c33eda18fd64.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1237970/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1237970/library_hero.jpg"
+    },
+    {
+      "appid": 1716740,
+      "name": "Starfield",
+      "minutes": 4039,
+      "twoWeeksMinutes": 2224,
+      "lastPlayed": 1789369494,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1716740/b4d5828937b2d29b875405dce97bbae0a5d01bbe.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1716740/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1716740/library_hero.jpg"
+    },
+    {
+      "appid": 359550,
+      "name": "Tom Clancy's Rainbow Six Siege",
+      "minutes": 3937,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1692189131,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/359550/624745d333ac54aedb1ee911013e2edb7722550e.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/359550/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/359550/library_hero.jpg"
+    },
+    {
+      "appid": 1850570,
+      "name": "DEATH STRANDING DIRECTOR'S CUT",
+      "minutes": 2928,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1780208806,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1850570/dd1abd2566c95d1e89408570719657a663591f8f.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1850570/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1850570/library_hero.jpg"
+    },
+    {
+      "appid": 1091500,
+      "name": "Cyberpunk 2077",
+      "minutes": 2755,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1752313504,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1091500/6897c3848f3e0350d512f59d5bae174a1e3739f9.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/library_hero.jpg"
+    },
+    {
+      "appid": 739630,
+      "name": "Phasmophobia",
+      "minutes": 2543,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1665934030,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/739630/125673b382059f666ec81477173380a76e1df0be.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/739630/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/739630/library_hero.jpg"
+    },
+    {
+      "appid": 550,
+      "name": "Left 4 Dead 2",
+      "minutes": 2437,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1684388402,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/550/7d5a243f9500d2f8467312822f8af2a2928777ed.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/550/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/550/library_hero.jpg"
+    },
+    {
+      "appid": 282070,
+      "name": "This War of Mine",
+      "minutes": 2396,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1747410085,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/282070/38ad6fd10e2b89ab24e8013584ece7961bebe086.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/282070/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/282070/library_hero.jpg"
+    },
+    {
+      "appid": 292030,
+      "name": "The Witcher 3: Wild Hunt - Complete Edition",
+      "minutes": 2139,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1720619003,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/292030/7b52d11edee478d652ef4e7103e00644bed2c74c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/library_hero.jpg"
+    },
+    {
+      "appid": 1189490,
+      "name": "觅长生",
+      "minutes": 1732,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1780675473,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1189490/f242f2631b18b9644781ba1df9af65ae18e59bf9.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1189490/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1189490/library_hero.jpg"
+    },
+    {
+      "appid": 2840770,
+      "name": "Avatar: Frontiers of Pandora",
+      "minutes": 1730,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1762152533,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2840770/50df849499bbee0de058c075e3d2d3ca3133be08.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2840770/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2840770/library_hero.jpg"
     },
     {
       "appid": 431960,
@@ -27,9 +227,19 @@
       "minutes": 1679,
       "twoWeeksMinutes": 0,
       "lastPlayed": 1684386447,
-      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/431960/72edaed9d748c6cf7397ffb1c83f0b837b9ebd9d.jpg",
-      "header": "https://cdn.akamai.steamstatic.com/steam/apps/431960/header.jpg",
-      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/431960/library_hero.jpg"
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/431960/72edaed9d748c6cf7397ffb1c83f0b837b9ebd9d.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/431960/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/431960/library_hero.jpg"
+    },
+    {
+      "appid": 553850,
+      "name": "HELLDIVERS™ 2",
+      "minutes": 1646,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1757333287,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/553850/c3dff088e090f81d6e3d88eabbb67732647c69cf.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/553850/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/553850/library_hero.jpg"
     },
     {
       "appid": 264710,
@@ -37,9 +247,119 @@
       "minutes": 1473,
       "twoWeeksMinutes": 0,
       "lastPlayed": 1756565854,
-      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/264710/8a14ceef6e230330a916d7a6324b8c52d464d569.jpg",
-      "header": "https://cdn.akamai.steamstatic.com/steam/apps/264710/header.jpg",
-      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/264710/library_hero.jpg"
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/264710/8a14ceef6e230330a916d7a6324b8c52d464d569.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/264710/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/264710/library_hero.jpg"
+    },
+    {
+      "appid": 1601570,
+      "name": "The Alters",
+      "minutes": 1422,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1750500402,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1601570/d630b33a4739ec61aae711169ade4d88bb45c0ba.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1601570/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1601570/library_hero.jpg"
+    },
+    {
+      "appid": 242760,
+      "name": "The Forest",
+      "minutes": 1227,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1669698331,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/242760/3a6847f6ac5879e48531db52261771d5e22904ac.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/242760/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/242760/library_hero.jpg"
+    },
+    {
+      "appid": 393380,
+      "name": "Squad",
+      "minutes": 1199,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1669623554,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/393380/eb66a8cb52165274c84cae6526205065d13119d5.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/393380/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/393380/library_hero.jpg"
+    },
+    {
+      "appid": 275850,
+      "name": "No Man's Sky",
+      "minutes": 1056,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1755533128,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/275850/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/275850/library_hero.jpg"
+    },
+    {
+      "appid": 578080,
+      "name": "PUBG: BATTLEGROUNDS",
+      "minutes": 884,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1711217458,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/578080/609f27278aa70697c13bf99f32c5a0248c381f9d.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/578080/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/578080/library_hero.jpg"
+    },
+    {
+      "appid": 653530,
+      "name": "Return of the Obra Dinn",
+      "minutes": 857,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1761038459,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/653530/24c6239385563bff1fccad712f27a0c1fe18349b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/653530/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/653530/library_hero.jpg"
+    },
+    {
+      "appid": 1962700,
+      "name": "Subnautica 2",
+      "minutes": 757,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1780207470,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1962700/a6810ae79dc1592fdd890f463311cb5b8df8aa3c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1962700/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1962700/library_hero.jpg"
+    },
+    {
+      "appid": 1966720,
+      "name": "Lethal Company",
+      "minutes": 740,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1703776854,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1966720/80d2453285274e4723c884a671cdd3f8fe2f766f.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1966720/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1966720/library_hero.jpg"
+    },
+    {
+      "appid": 239140,
+      "name": "Dying Light",
+      "minutes": 717,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1681035811,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/239140/d575b4ba3480fe20aaeda8e8f498c3e47033069d.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/239140/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/239140/library_hero.jpg"
+    },
+    {
+      "appid": 513710,
+      "name": "SCUM",
+      "minutes": 670,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1669522025,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/513710/c25483e3e989239b932901118e44cf71606b5973.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/513710/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/513710/library_hero.jpg"
+    },
+    {
+      "appid": 1222140,
+      "name": "Detroit: Become Human",
+      "minutes": 632,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1759425669,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1222140/3d9f5bc971d44398aef740c0d8e79a358be2e800.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1222140/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1222140/library_hero.jpg"
     },
     {
       "appid": 1366540,
@@ -47,9 +367,319 @@
       "minutes": 621,
       "twoWeeksMinutes": 0,
       "lastPlayed": 1745573264,
-      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1366540/55fa75b8e6586427da47f58f320e975e990a460b.jpg",
-      "header": "https://cdn.akamai.steamstatic.com/steam/apps/1366540/header.jpg",
-      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/1366540/library_hero.jpg"
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1366540/55fa75b8e6586427da47f58f320e975e990a460b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1366540/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1366540/library_hero.jpg"
+    },
+    {
+      "appid": 208650,
+      "name": "Batman™: Arkham Knight",
+      "minutes": 436,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1756626192,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/208650/f6c2ce13796844750dfbd01685fb009eeac4bf70.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/208650/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/208650/library_hero.jpg"
+    },
+    {
+      "appid": 1274570,
+      "name": "DEVOUR",
+      "minutes": 422,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1667045690,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1274570/e24aa080068d3686e0b1b5aa52a4155dc553e69d.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1274570/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1274570/library_hero.jpg"
+    },
+    {
+      "appid": 632470,
+      "name": "Disco Elysium",
+      "minutes": 403,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1774452739,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/632470/b681544caa931c7c1a6788e6e3e33cb42892d17c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/632470/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/632470/library_hero.jpg"
+    },
+    {
+      "appid": 460920,
+      "name": "Steep",
+      "minutes": 304,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1625153162,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/460920/0cd871768bc488856bd5bf44a196b221fc9a878b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/460920/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/460920/library_hero.jpg"
+    },
+    {
+      "appid": 3081410,
+      "name": "Battlefield™ 6 Open Beta",
+      "minutes": 304,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1755333607,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/3081410/575dad25afc50972728d2b85cccb4f6093ebe175.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/3081410/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/3081410/library_hero.jpg"
+    },
+    {
+      "appid": 2507950,
+      "name": "Delta Force",
+      "minutes": 292,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1756737949,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2507950/52bc6c4bf0c232cf30d66eb3d1638bf099bc6061.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2507950/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2507950/library_hero.jpg"
+    },
+    {
+      "appid": 236390,
+      "name": "War Thunder",
+      "minutes": 279,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1570941349,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/236390/c69fbafb6e9891314cc5df0fe6a659612c289bf9.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/236390/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/236390/library_hero.jpg"
+    },
+    {
+      "appid": 1578650,
+      "name": "Citizen Sleeper",
+      "minutes": 264,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1762254901,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1578650/39a0deacdbdfdb97ef9e634282db10973e39c681.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1578650/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1578650/library_hero.jpg"
+    },
+    {
+      "appid": 2290180,
+      "name": "Riders Republic",
+      "minutes": 264,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1705657294,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2290180/7f050062aecbec623b59b8511caee941fd7f26ba.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2290180/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2290180/library_hero.jpg"
+    },
+    {
+      "appid": 815370,
+      "name": "Green Hell",
+      "minutes": 247,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1745644612,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/815370/d118d766ef0107189e71b1410bebe13831b70d7b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/815370/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/815370/library_hero.jpg"
+    },
+    {
+      "appid": 218620,
+      "name": "PAYDAY 2",
+      "minutes": 246,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1609755545,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/218620/8fce45cbb0dee03e87cd30b96ac5e5c3d4b2c494.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/218620/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/218620/library_hero.jpg"
+    },
+    {
+      "appid": 379430,
+      "name": "Kingdom Come: Deliverance",
+      "minutes": 231,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1752344250,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/379430/915ec515c36645855abed0476b5b0891d8a4e47a.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/379430/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/379430/library_hero.jpg"
+    },
+    {
+      "appid": 870780,
+      "name": "Control Ultimate Edition",
+      "minutes": 231,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1759484740,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/870780/3438e3a03c82194349d66f99ee642ba59cbcc3dc.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/870780/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/870780/library_hero.jpg"
+    },
+    {
+      "appid": 362890,
+      "name": "Black Mesa",
+      "minutes": 228,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1747493535,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/362890/51182b6a74035eb913b353d5d60e596c3804daf6.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/362890/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/362890/library_hero.jpg"
+    },
+    {
+      "appid": 381210,
+      "name": "Dead by Daylight",
+      "minutes": 228,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1607260302,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/381210/aa152097a700fd6f4707397ce41794ea30874790.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/381210/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/381210/library_hero.jpg"
+    },
+    {
+      "appid": 1166290,
+      "name": "Death and Taxes",
+      "minutes": 219,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1682515185,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1166290/37ac7556cca4338aae9660af3c359faf6bba95a3.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1166290/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1166290/library_hero.jpg"
+    },
+    {
+      "appid": 219150,
+      "name": "Hotline Miami",
+      "minutes": 201,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1620401493,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/219150/493c0a3e823c60c14f91204526f26cc064ed7c84.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/219150/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/219150/library_hero.jpg"
+    },
+    {
+      "appid": 1288310,
+      "name": "Firework",
+      "minutes": 200,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1666352101,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1288310/d64841d76cc4ff9642dcc79c286bedaa3df3d810.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1288310/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1288310/library_hero.jpg"
+    },
+    {
+      "appid": 698670,
+      "name": "Scorn",
+      "minutes": 194,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1774172330,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/698670/e3c072bef9897ae18b807b119bbadb5681dc0055.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/698670/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/698670/library_hero.jpg"
+    },
+    {
+      "appid": 230410,
+      "name": "Warframe",
+      "minutes": 192,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1616958922,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/230410/22064646470f4c53388ba87774c7ac10f0a91ffa.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/230410/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/230410/library_hero.jpg"
+    },
+    {
+      "appid": 1304930,
+      "name": "The Outlast Trials",
+      "minutes": 190,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1742134511,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1304930/159a7d66ffd179c920eefe07392e6a261e899965.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1304930/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1304930/library_hero.jpg"
+    },
+    {
+      "appid": 589780,
+      "name": "The Red Strings Club",
+      "minutes": 183,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1619460082,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/589780/228a7dd0ce6f4514430a574ba4a29cf6d0df01d0.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/589780/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/589780/library_hero.jpg"
+    },
+    {
+      "appid": 620,
+      "name": "Portal 2",
+      "minutes": 182,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1680083636,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/620/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/620/library_hero.jpg"
+    },
+    {
+      "appid": 383870,
+      "name": "Firewatch",
+      "minutes": 173,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1704967762,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/383870/d13e70a08cab192c52104f315a7d68591c085e81.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/383870/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/383870/library_hero.jpg"
+    },
+    {
+      "appid": 1364020,
+      "name": "Boundary",
+      "minutes": 163,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1683383674,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1364020/b6c13d901a2bbbcc34c512f2144075b2cc14c42c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1364020/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1364020/library_hero.jpg"
+    },
+    {
+      "appid": 220,
+      "name": "Half-Life 2",
+      "minutes": 159,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1732343845,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/220/fcfb366051782b8ebf2aa297f3b746395858cb62.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/220/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/220/library_hero.jpg"
+    },
+    {
+      "appid": 609320,
+      "name": "FAR: Lone Sails",
+      "minutes": 159,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1719845566,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/609320/3e1dc29370610797cfebed20bb202f5bffd236fe.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/609320/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/609320/library_hero.jpg"
+    },
+    {
+      "appid": 955050,
+      "name": "Bright Memory",
+      "minutes": 155,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1609743944,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/955050/92cba0efd85225320c7b6134a32cb804b4118df5.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/955050/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/955050/library_hero.jpg"
+    },
+    {
+      "appid": 43160,
+      "name": "Metro: Last Light Complete Edition",
+      "minutes": 149,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1745937694,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/43160/7b84b80d2cebe41ba87c59b28e2473d3b33e797d.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/43160/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/43160/library_hero.jpg"
+    },
+    {
+      "appid": 2076040,
+      "name": "THE FINALS PLAYTEST",
+      "minutes": 149,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1698771769,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2076040/5c445c6a035d0e462068ec4d164e2224a2e7cc94.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2076040/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2076040/library_hero.jpg"
+    },
+    {
+      "appid": 346110,
+      "name": "ARK: Survival Evolved",
+      "minutes": 147,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1631907572,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/346110/fef1799533131c10f538d2dd697bbbd89e663265.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/346110/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/346110/library_hero.jpg"
     },
     {
       "appid": 477160,
@@ -57,9 +687,389 @@
       "minutes": 126,
       "twoWeeksMinutes": 0,
       "lastPlayed": 1615911789,
-      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/477160/15c6f6a4d69633a63ee410b24a2417f16d803b06.jpg",
-      "header": "https://cdn.akamai.steamstatic.com/steam/apps/477160/header.jpg",
-      "hero": "https://cdn.akamai.steamstatic.com/steam/apps/477160/library_hero.jpg"
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/477160/15c6f6a4d69633a63ee410b24a2417f16d803b06.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/477160/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/477160/library_hero.jpg"
+    },
+    {
+      "appid": 3240220,
+      "name": "Grand Theft Auto V Enhanced",
+      "minutes": 121,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1779714307,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/3240220/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/3240220/library_hero.jpg"
+    },
+    {
+      "appid": 1178830,
+      "name": "Bright Memory: Infinite",
+      "minutes": 115,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1636908833,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1178830/17131841d99087241402aeb1a02aa3d378188440.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1178830/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1178830/library_hero.jpg"
+    },
+    {
+      "appid": 289070,
+      "name": "Sid Meier's Civilization VI",
+      "minutes": 99,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1668438029,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/289070/9dc914132fec244adcede62fb8e7524a72a7398c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/library_hero.jpg"
+    },
+    {
+      "appid": 70,
+      "name": "Half-Life",
+      "minutes": 93,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1700380355,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/70/95be6d131fc61f145797317ca437c9765f24b41c.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/70/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/70/library_hero.jpg"
+    },
+    {
+      "appid": 2369390,
+      "name": "Far Cry 6",
+      "minutes": 88,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1774452462,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2369390/178c21f6ed3ea43c9e5b3c9ea2919e7bca63c7b0.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2369390/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2369390/library_hero.jpg"
+    },
+    {
+      "appid": 322330,
+      "name": "Don't Starve Together",
+      "minutes": 66,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1669381742,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/322330/a80aa6cff8eebc1cbc18c367d9ab063e1553b0ee.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/322330/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/322330/library_hero.jpg"
+    },
+    {
+      "appid": 274520,
+      "name": "Darkwood",
+      "minutes": 64,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1702383071,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/274520/c8d29a171cab2435eb5d540ed2f03c448ad6de5a.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/274520/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/274520/library_hero.jpg"
+    },
+    {
+      "appid": 223470,
+      "name": "POSTAL 2",
+      "minutes": 54,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1630204842,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/223470/1b6787955f48e75db92205e7db5ad820cf7d5251.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/223470/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/223470/library_hero.jpg"
+    },
+    {
+      "appid": 552500,
+      "name": "Warhammer: Vermintide 2",
+      "minutes": 54,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1667538469,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/552500/a671f2ddf7359beba9702ac097baf6d50cb07202.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/552500/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/552500/library_hero.jpg"
+    },
+    {
+      "appid": 714010,
+      "name": "Aimlabs",
+      "minutes": 51,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1619850417,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/714010/15347de11efc127539c388e585af9e92d10d5189.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/714010/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/714010/library_hero.jpg"
+    },
+    {
+      "appid": 658850,
+      "name": "Do Not Feed the Monkeys",
+      "minutes": 49,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1668477356,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/658850/f8fc175b3a866b5b32b2ddaaefdf00f0858052e3.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/658850/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/658850/library_hero.jpg"
+    },
+    {
+      "appid": 610370,
+      "name": "Desperados III",
+      "minutes": 41,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1759470837,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/610370/3f8d3ff835397cb30ee44693757456060946de63.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/610370/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/610370/library_hero.jpg"
+    },
+    {
+      "appid": 1328670,
+      "name": "Mass Effect™ Legendary Edition",
+      "minutes": 41,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1761063507,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1328670/443ed7dba43882ef4298f8ed15bf67f323461e14.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1328670/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1328670/library_hero.jpg"
+    },
+    {
+      "appid": 356570,
+      "name": "Party Hard",
+      "minutes": 29,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1723806108,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/356570/7435291bc4a3c11c601c903bf79ac9f75ee0a839.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/356570/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/356570/library_hero.jpg"
+    },
+    {
+      "appid": 424840,
+      "name": "Little Nightmares",
+      "minutes": 29,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1622286651,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/424840/1904c041f963b5e2cb22b56c370444517cc4e288.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/424840/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/424840/library_hero.jpg"
+    },
+    {
+      "appid": 1449690,
+      "name": "The Walking Dead: The Telltale Definitive Series",
+      "minutes": 28,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1698761849,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1449690/bd1fd090e72bc6584f1b271341a1be6d7fe6881e.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1449690/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1449690/library_hero.jpg"
+    },
+    {
+      "appid": 1233570,
+      "name": "Mirror's Edge™ Catalyst",
+      "minutes": 22,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1685623923,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1233570/a5583fa5e07defaeb3a3ade0b4936767265dd660.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1233570/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1233570/library_hero.jpg"
+    },
+    {
+      "appid": 391720,
+      "name": "Layers of Fear (2016)",
+      "minutes": 21,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1570939587,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/391720/0fc90b925c7bbdcc95df6599a01b80dff18e6bbb.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/391720/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/391720/library_hero.jpg"
+    },
+    {
+      "appid": 396750,
+      "name": "EVERSPACE™",
+      "minutes": 17,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1747498561,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/396750/46e33e30c65ec0c149f57a903e964ef6f14cf6f7.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/396750/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/396750/library_hero.jpg"
+    },
+    {
+      "appid": 548430,
+      "name": "Deep Rock Galactic",
+      "minutes": 16,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1750493009,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/548430/e033e23c29a192a17c16a7645a2b423ac64ff447.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/548430/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/548430/library_hero.jpg"
+    },
+    {
+      "appid": 3350200,
+      "name": "Revenge on gold diggers ",
+      "minutes": 16,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1750520195,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/3350200/b8bb31cec008ac2a794458ed5251b75bbe50df14.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/3350200/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/3350200/library_hero.jpg"
+    },
+    {
+      "appid": 274170,
+      "name": "Hotline Miami 2: Wrong Number",
+      "minutes": 12,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1623949260,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/274170/3fc78b615529f78cc24cea247c7b2ee50c551bbd.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/274170/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/274170/library_hero.jpg"
+    },
+    {
+      "appid": 1267540,
+      "name": "WRC 9 FIA World Rally Championship",
+      "minutes": 11,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1754383344,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1267540/58f703f71027649731ce0c1034e1b7f0d7927fc4.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1267540/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1267540/library_hero.jpg"
+    },
+    {
+      "appid": 503560,
+      "name": "911 Operator",
+      "minutes": 10,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1761540100,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/503560/823158b3e81e69f1fb9c355c86f05655575e6317.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/503560/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/503560/library_hero.jpg"
+    },
+    {
+      "appid": 48000,
+      "name": "LIMBO",
+      "minutes": 7,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1672378706,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/48000/463f57855017564301b17050fba73804b3bd86d6.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/48000/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/48000/library_hero.jpg"
+    },
+    {
+      "appid": 231430,
+      "name": "Company of Heroes 2",
+      "minutes": 7,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 1622196107,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/231430/5e7e1866fb4f33a17393b0441cd1c750dbd91c5f.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/231430/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/231430/library_hero.jpg"
+    },
+    {
+      "appid": 320,
+      "name": "Half-Life 2: Deathmatch",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/320/795e85364189511f4990861b578084deef086cb1.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/320/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/320/library_hero.jpg"
+    },
+    {
+      "appid": 360,
+      "name": "Half-Life Deathmatch: Source",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/360/40b8a62efff5a9ab356e5c56f5c8b0532c8e1aa3.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/360/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/360/library_hero.jpg"
+    },
+    {
+      "appid": 233270,
+      "name": "Far Cry® 3 Blood Dragon",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/233270/37ea239abeef5c5b2a90a2f821aaab745633972a.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/233270/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/233270/library_hero.jpg"
+    },
+    {
+      "appid": 249050,
+      "name": "Dungeon of the ENDLESS™",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/249050/19f66db5192b05b71068dd243729c3d8b0d71f65.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/249050/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/249050/library_hero.jpg"
+    },
+    {
+      "appid": 407530,
+      "name": "ARK: Survival Of The Fittest",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/407530/807c673cddebbfee0700a947a75f4872ad136e9b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/407530/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/407530/library_hero.jpg"
+    },
+    {
+      "appid": 457140,
+      "name": "Oxygen Not Included",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/457140/d37534163ebac8351e0bda0bf30f8f2174c921b6.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/457140/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/457140/library_hero.jpg"
+    },
+    {
+      "appid": 623990,
+      "name": "Tom Clancy's Rainbow Six Siege - Test Server",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/623990/20deaf466474f76f2ffdb345fe56f40fe3af74c0.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/623990/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/623990/library_hero.jpg"
+    },
+    {
+      "appid": 774941,
+      "name": "Squad - Public Testing",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/774941/6a9ee44c92c5ca7ddacf0d56bb7d5720961da0f8.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/774941/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/774941/library_hero.jpg"
+    },
+    {
+      "appid": 1128920,
+      "name": "EVERSPACE™ 2",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1128920/8c85afd78e1ecfd907b495b2651dc227a3a0a47f.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/1128920/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/1128920/library_hero.jpg"
+    },
+    {
+      "appid": 2149010,
+      "name": "Little Nightmares Enhanced Edition",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2149010/6d1326d97decbaeddca21c14daa5041d464a1a63.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2149010/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2149010/library_hero.jpg"
+    },
+    {
+      "appid": 2442460,
+      "name": "Citizen Sleeper 2: Starward Vector",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/2442460/38fc8d1f718da774916fbbe20022f2cf1945f805.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/2442460/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/2442460/library_hero.jpg"
+    },
+    {
+      "appid": 3595230,
+      "name": "Call of Duty®: Modern Warfare® II",
+      "minutes": 0,
+      "twoWeeksMinutes": 0,
+      "lastPlayed": 0,
+      "icon": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/3595230/4e557bc86b950518cf3d8bd8ebec5f91d867bb9b.jpg",
+      "header": "https://cdn.cloudflare.steamstatic.com/steam/apps/3595230/header.jpg",
+      "hero": "https://cdn.cloudflare.steamstatic.com/steam/apps/3595230/library_hero.jpg"
     }
   ]
 }
