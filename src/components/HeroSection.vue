@@ -14,10 +14,13 @@ import TechButton from './TechButton.vue'
     </div>
 
     <div class="container hero-content">
-      <span class="hero-tag reveal">// WELCOME TO MY PORTFOLIO</span>
+      <div class="hero-head reveal">
+        <span class="hero-tag">// WELCOME TO MY PORTFOLIO</span>
+        <span class="hero-role">// Creator of PiusPrime // Full-Stack Developer</span>
+      </div>
 
       <h1 class="hero-title reveal">
-        你好，我是 <span class="accent">N0THING</span>
+        你好，我是 <span class="accent">PIUSPRIME</span>
       </h1>
 
       <p class="hero-sub reveal">
@@ -114,13 +117,36 @@ import TechButton from './TechButton.vue'
   z-index: 2;
 }
 
+/* 首屏标签组：主标签 + 一行小字副标 */
+.hero-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
 .hero-tag {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 3px;
   color: var(--cyan);
-  margin-bottom: 26px;
+}
+
+.hero-role {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  letter-spacing: 1.6px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 640px) {
+  .hero-role {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
 }
 
 .hero-title {

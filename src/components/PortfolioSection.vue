@@ -3,7 +3,7 @@ import TechButton from './TechButton.vue'
 
 const projects = [
   {
-    title: 'MyWebsite',
+    title: 'Pius.Prime',
     desc: '未来科技风个人主页，含开场动画、斜切导航与描边按钮。',
     tags: ['Vue 3', 'Vite', 'CSS'],
     link: '#',

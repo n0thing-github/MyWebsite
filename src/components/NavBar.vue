@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" />
         </svg>
-        <span class="logo-text">MyWebsite</span>
+        <span class="logo-text">Pius.Prime</span>
       </a>
 
       <!-- 桌面导航 -->
@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <p class="sidebar-foot">© 2026 N0THING · Built with Vue 3 + Vite</p>
+      <p class="sidebar-foot">© 2026 PIUSPRIME · Built with Vue 3 + Vite</p>
     </aside>
   </Teleport>
 </template>

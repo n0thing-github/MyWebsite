@@ -5,10 +5,10 @@
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" />
         </svg>
-        <span>MyWebsite</span>
+        <span>Pius.Prime</span>
       </a>
 
-      <p class="f-copy">© 2026 N0THING · Built with Vue 3 + Vite</p>
+      <p class="f-copy">© 2026 PIUSPRIME · Built with Vue 3 + Vite</p>
 
       <div class="f-social">
         <a href="https://github.com/n0thing-github" target="_blank" rel="noopener" aria-label="GitHub">

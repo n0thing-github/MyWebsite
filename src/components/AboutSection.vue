@@ -21,7 +21,7 @@ const highlights = [
 
       <div class="about-grid">
         <p class="section-desc">
-          你好，我是 N0THING，一名专注于 Web 前端与创意开发的全栈开发者。
+          你好，我是 PIUSPRIME，一名专注于 Web 前端与创意开发的全栈开发者。
           我喜欢把复杂的问题拆解成优雅的解决方案，用代码构建沉浸式的数字体验。
           从静态页面到交互式应用，从视觉动效到性能优化，
           我始终相信 —— 好的产品，是技术与美学的结合。
