@@ -18,7 +18,15 @@ const DURATION = 6000
  */
 const MAX_FRAME = 64
 
-const games = computed(() => steam.games.filter((g) => g.hero || g.header))
+/**
+ * 轮播只取时长最高的前 N 款。
+ * 游戏库有上百款时不截断会出两个问题：分页条要渲染上百根细条（挤爆一行），
+ * 以及 preload 会把上百张 library_hero 全部预取（几十 MB）。
+ * 下面的「Steam 游戏库」区块仍会展示全部游戏。
+ */
+const BANNER_LIMIT = 8
+
+const games = computed(() => steam.games.filter((g) => g.hero || g.header).slice(0, BANNER_LIMIT))
 const idx = ref(0)
 /** 进度条填充比例 0~1，每帧写入 transform: scaleX() */
 const progress = ref(0)
@@ -160,7 +168,7 @@ onBeforeUnmount(() => {
           </svg>
         </button>
 
-        <span class="bn-hud">STEAM LIBRARY · {{ pad(games.length) }} TITLES</span>
+        <span class="bn-hud">STEAM LIBRARY · {{ pad(steam.games.length) }} TITLES</span>
       </div>
 
       <!-- 分页：细条 + 红色进度填充（取自 faze 的 header-banners__pagination） -->
