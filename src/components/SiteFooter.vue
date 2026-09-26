@@ -1,7 +1,16 @@
+<script setup>
+import { go } from '../router'
+
+// 直接在二级页面点这里时，需要 router 负责切回主页并补一次滚动定位
+function toHome() {
+  go('#home')
+}
+</script>
+
 <template>
   <footer class="footer">
     <div class="container footer-inner">
-      <a class="f-logo" href="#home">
+      <a class="f-logo" href="#home" @click="toHome">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" />
         </svg>
@@ -14,7 +23,7 @@
         <a href="https://github.com/n0thing-github" target="_blank" rel="noopener" aria-label="GitHub">
           GitHub
         </a>
-        <a href="#home" aria-label="回到顶部">Top ↑</a>
+        <a href="#home" aria-label="回到顶部" @click="toHome">Top ↑</a>
       </div>
     </div>
   </footer>

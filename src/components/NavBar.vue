@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, onBeforeUnmount } from 'vue'
+import { go } from '../router'
 
 // 右上角 doc 风格按钮：控制全屏展开菜单
 const menuOpen = ref(false)
@@ -19,7 +20,21 @@ const navItems = [
   { label: '技能', href: '#skills' },
   { label: '游戏', href: '#steam' },
   { label: '联系', href: '#contact' },
+  // 二级页面入口（hash 路由，见 src/router.js 的命名空间约定）
+  { label: '遗忘曲线', href: '#/ebbinghaus' },
 ]
+
+/**
+ * 统一的导航跳转。
+ * 交给 router.go 而不是让浏览器直接改 hash，原因是：从二级页面点回 "#about"
+ * 这类锚点时，目标元素要等 Vue 把主页渲染出来才存在，
+ * 需要 router 在 nextTick 之后再补一次 scrollIntoView。
+ * 保留 a[href] 是为了中键/新标签打开与无障碍语义。
+ */
+function onNavClick(href) {
+  closeMenu()
+  go(href)
+}
 
 // 滚动锁：不再写 body 的 inline style（iOS Safari 对 body{overflow:hidden} 不生效，
 // 而且会和 Preloader 的 inline overflow 互相覆盖），改为在 <html> 上挂 class，由 CSS 同时锁 html/body。
@@ -47,7 +62,7 @@ onBeforeUnmount(() => {
   <header class="navbar">
     <div class="nav-inner">
       <!-- Logo -->
-      <a class="logo" href="#home">
+      <a class="logo" href="#home" @click="onNavClick('#home')">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" />
         </svg>
@@ -57,7 +72,7 @@ onBeforeUnmount(() => {
       <!-- 桌面导航 -->
       <ul class="nav-list">
         <li v-for="item in navItems" :key="item.label" class="nav-item" :class="{ 'has-drop': item.children }">
-          <a class="nav-link" :href="item.href">
+          <a class="nav-link" :href="item.href" @click="onNavClick(item.href)">
             <span>{{ item.label }}</span>
             <svg v-if="item.children" class="arrow" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M5 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" />
@@ -65,7 +80,13 @@ onBeforeUnmount(() => {
           </a>
 
           <div v-if="item.children" class="drop-panel">
-            <a v-for="child in item.children" :key="child.label" class="drop-item" :href="child.href">
+            <a
+              v-for="child in item.children"
+              :key="child.label"
+              class="drop-item"
+              :href="child.href"
+              @click="onNavClick(child.href)"
+            >
               <span class="drop-icon"></span>
               <span>{{ child.label }}</span>
             </a>
@@ -105,7 +126,7 @@ onBeforeUnmount(() => {
           v-for="item in navItems"
           :key="item.label"
           :href="item.href"
-          @click="closeMenu"
+          @click="onNavClick(item.href)"
         >
           <span class="sidebar-idx">0{{ navItems.indexOf(item) + 1 }}</span>
           {{ item.label }}
@@ -246,6 +267,9 @@ onBeforeUnmount(() => {
   position: relative;
   display: flex;
   align-items: center;
+  /* 导航项从 6 个增加到 7 个后，中等宽度（约 900px）下 flex 会把每项压窄，
+     标签会被折成两行（"首/页"），这里统一禁止换行 */
+  white-space: nowrap;
 }
 
 .nav-link {
@@ -255,6 +279,7 @@ onBeforeUnmount(() => {
   gap: 7px;
   font-size: 14px;
   letter-spacing: 1px;
+  white-space: nowrap;
   color: var(--text-dim);
   padding: 9px 20px;
   margin: 0 3px;
