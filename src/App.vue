@@ -1,13 +1,20 @@
 <script setup>
-import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
+import { onMounted, onBeforeUnmount, watch, nextTick, computed, defineAsyncComponent } from 'vue'
 import BackdropFX from './components/BackdropFX.vue'
 import Preloader from './components/Preloader.vue'
 import NavBar from './components/NavBar.vue'
 import HomePage from './components/HomePage.vue'
 import ForgettingCurvePage from './components/ForgettingCurvePage.vue'
-import HcipPage from './components/hcip/HcipPage.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import { useRoute, syncViewportAfterRoute } from './router'
+
+/**
+ * 备考模块按需加载。
+ * 它带着约 350KB 的题库与 15 个组件，而绝大多数访客只看主页 ——
+ * 静态引入会让首页 chunk 从约 520KB 涨到 627KB（实测），这是不必要的首屏成本。
+ * 拆出去之后首页体积不变，只有真正进入 #/hcip 才下载。
+ */
+const HcipPage = defineAsyncComponent(() => import('./components/hcip/HcipPage.vue'))
 
 const { route } = useRoute()
 

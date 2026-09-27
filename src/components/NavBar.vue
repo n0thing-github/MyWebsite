@@ -30,10 +30,17 @@ const navItems = [
  * 交给 router.go 而不是让浏览器直接改 hash，原因是：从二级页面点回 "#about"
  * 这类锚点时，目标元素要等 Vue 把主页渲染出来才存在，
  * 需要 router 在 nextTick 之后再补一次 scrollIntoView。
- * 保留 a[href] 是为了中键/新标签打开与无障碍语义。
+ *
+ * 同时 preventDefault：不让浏览器再按 a[href="#xxx"] 自己做一次锚点滚动，
+ * 否则一次点击会有两套滚动逻辑同时作用（router 的定位 + 浏览器的锚点跳转），
+ * 落点取决于谁最后生效，容易抖动。
+ * 只拦普通左键，中键 / ⌘点击仍走原生行为（可新标签打开）。
  */
-function onNavClick(href) {
+function onNavClick(href, evt) {
   closeMenu()
+  if (evt && evt.button === 0 && !evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey) {
+    evt.preventDefault()
+  }
   go(href)
 }
 
@@ -63,7 +70,7 @@ onBeforeUnmount(() => {
   <header class="navbar">
     <div class="nav-inner">
       <!-- Logo -->
-      <a class="logo" href="#home" @click="onNavClick('#home')">
+      <a class="logo" href="#home" @click="onNavClick('#home', $event)">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" />
         </svg>
@@ -73,7 +80,7 @@ onBeforeUnmount(() => {
       <!-- 桌面导航 -->
       <ul class="nav-list">
         <li v-for="item in navItems" :key="item.label" class="nav-item" :class="{ 'has-drop': item.children }">
-          <a class="nav-link" :href="item.href" @click="onNavClick(item.href)">
+          <a class="nav-link" :href="item.href" @click="onNavClick(item.href, $event)">
             <span>{{ item.label }}</span>
             <svg v-if="item.children" class="arrow" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M5 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" />
@@ -86,7 +93,7 @@ onBeforeUnmount(() => {
               :key="child.label"
               class="drop-item"
               :href="child.href"
-              @click="onNavClick(child.href)"
+              @click="onNavClick(child.href, $event)"
             >
               <span class="drop-icon"></span>
               <span>{{ child.label }}</span>
@@ -127,7 +134,7 @@ onBeforeUnmount(() => {
           v-for="item in navItems"
           :key="item.label"
           :href="item.href"
-          @click="onNavClick(item.href)"
+          @click="onNavClick(item.href, $event)"
         >
           <span class="sidebar-idx">0{{ navItems.indexOf(item) + 1 }}</span>
           {{ item.label }}
