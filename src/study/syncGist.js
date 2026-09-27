@@ -81,6 +81,18 @@ export function createGistSync({
     return { login: me?.login || '', name: me?.name || '' }
   }
 
+  /**
+   * 找出本应用之前创建的 gist。
+   * 换设备时用户只会粘一个 token —— 如果这时直接新建 gist，
+   * 手机上就会凭空多出一份空白进度，两边从此各写各的。所以先找再建。
+   */
+  async function findExistingGist() {
+    const list = await call('/gists?per_page=100')
+    if (!Array.isArray(list)) return ''
+    const hit = list.find((g) => g?.files && Object.prototype.hasOwnProperty.call(g.files, filename))
+    return hit?.id || ''
+  }
+
   /** 读取远端进度；没有这个文件时返回 null */
   async function pull() {
     if (!gistId) throw new Error('还没配置 Gist')
@@ -122,5 +134,5 @@ export function createGistSync({
     return json?.id || ''
   }
 
-  return { checkToken, pull, push, createGist }
+  return { checkToken, findExistingGist, pull, push, createGist }
 }

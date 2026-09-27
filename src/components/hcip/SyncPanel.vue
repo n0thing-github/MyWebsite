@@ -69,8 +69,8 @@ function onDisable() {
         <input v-model="token" type="password" autocomplete="off" placeholder="github_pat_…" />
       </label>
       <label class="field">
-        <span class="label">Gist ID（留空则自动创建一个）</span>
-        <input v-model="gistId" type="text" autocomplete="off" placeholder="留空自动创建" />
+        <span class="label">Gist ID（留空则复用已有的，没有才新建）</span>
+        <input v-model="gistId" type="text" autocomplete="off" placeholder="留空即可" />
       </label>
       <Chip block tone="cyan" :disabled="busy || !token.trim()" @click="onEnable">
         {{ busy ? '正在启用…' : '启用云同步' }}

@@ -213,6 +213,12 @@ export async function enableSync(token, gistId = '') {
     cfg.gistId = String(gistId || '').trim()
 
     if (!cfg.gistId) {
+      // 先找已有的：换设备时用户只粘 token，直接新建会凭空多出一份空白进度
+      status.message = '正在查找已有的 Gist…'
+      cfg.gistId = await api.findExistingGist()
+    }
+
+    if (!cfg.gistId) {
       status.message = '正在创建 Gist…'
       const payload = currentPayload(store)
       cfg.gistId = await api.createGist(payload)
