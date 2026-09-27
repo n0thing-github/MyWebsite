@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, setSubRoute } from '../../router'
 import { useStudyStore } from '../../study/useStudyStore'
 import { useStudyPlan } from '../../study/useStudyPlan'
@@ -13,7 +13,8 @@ import QuizRunner from './QuizRunner.vue'
 import ReviewView from './ReviewView.vue'
 import MockExamView from './MockExamView.vue'
 import ProgressView from './ProgressView.vue'
-import { EmptyState } from './ui'
+import SyncPanel from './SyncPanel.vue'
+import { EmptyState, Sheet } from './ui'
 
 /**
  * HCIP 备考模块的壳
@@ -26,6 +27,9 @@ const store = useStudyStore()
 const { plan, forecast, paceLabel, weakDomains } = useStudyPlan()
 
 const current = computed(() => subRoute.value || 'today')
+
+/** 云同步抽屉：放在壳里，任何视图（包括摸底页）都能打开 */
+const syncOpen = ref(false)
 
 /** 是否已完成摸底（或明确跳过）。未完成时优先引导做摸底 */
 const needsDiagnostic = computed(() => {
@@ -103,6 +107,7 @@ watch(
       :pace="paceLabel"
       :forecast="forecast"
       :weak-count="weakDomains.length"
+      @sync="syncOpen = true"
     />
 
     <!-- 写盘失败/刚做过恢复时，在**所有标签页**顶部常驻提示：
@@ -133,6 +138,10 @@ watch(
     </div>
 
     <TabBar :current="current" :counts="counts" :hide="needsDiagnostic" @go="goTab" />
+
+    <Sheet :open="syncOpen" title="云同步（GitHub Gist）" @close="syncOpen = false">
+      <SyncPanel />
+    </Sheet>
   </div>
 </template>
 
