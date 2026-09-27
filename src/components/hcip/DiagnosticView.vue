@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStudyStore } from '../../study/useStudyStore'
+import { restoreSession } from '../../study/session'
 import { buildPaper } from '../../study/useStudyPlan'
 import { splitByWeight } from '../../data/hcip/examConfig'
 import { gradePaper, gradeByDomain } from '../../study/grading'
@@ -18,12 +19,17 @@ import { Chip, EmptyState, ProgressBar } from './ui'
  *   · 让首日计划不是从"全部零基础"盲目开始
  *
  * 题量 40 道按考纲权重分域抽取，覆盖所有域，难度混合。
+ *
+ * 现场保存：40 题要花一二十分钟，中途接电话、切后台、刷新都很常见，
+ * 所以每答一题就把 {ids, index, responses, checkedIds, exam} 落到 store.sessions，
+ * 回来时接着上次那一题继续 —— 页面写着"可随时中断"，就得真的做得到。
  */
 const emit = defineEmits(['go'])
 
 const store = useStudyStore()
 
 const DIAGNOSTIC_COUNT = 40
+const SESSION_KEY = 'diagnostic'
 
 const phase = ref('intro') // intro | running | result
 const paper = ref([])
@@ -31,6 +37,8 @@ const index = ref(0)
 const responses = ref({})
 const checkedIds = ref([])
 const result = ref(null)
+/** 本轮是否来自恢复（用于顶部提示，避免用户以为答错了题号） */
+const resumed = ref(false)
 
 const currentQ = computed(() => paper.value[index.value] || null)
 const response = computed(() => responses.value[currentQ.value?.id] || [])
@@ -45,7 +53,19 @@ const examMeta = computed(() => store.examMeta.value)
 /** 每个域抽几道：按考纲权重分配，总数精确等于 DIAGNOSTIC_COUNT */
 const perDomain = computed(() => splitByWeight(store.currentExam.value, DIAGNOSTIC_COUNT))
 
-function start() {
+/** 落盘现场（每答一题都调，数据量很小，不必合并） */
+function persist() {
+  store.saveSession(SESSION_KEY, {
+    ids: paper.value.map((q) => q.id),
+    index: index.value,
+    responses: responses.value,
+    checkedIds: checkedIds.value,
+    exam: store.currentExam.value,
+  })
+}
+
+/** 开一份新试卷 */
+function newPaper() {
   const all = store.questions.value
   if (!all.length) return
   // 按域抽题后再整体洗牌，避免同域题目连续出现
@@ -54,8 +74,52 @@ function start() {
   responses.value = {}
   checkedIds.value = []
   result.value = null
+  resumed.value = false
   phase.value = 'running'
+  persist()
 }
+
+/**
+ * 尝试用已保存的现场续答。
+ * 只恢复**同一场考试**的现场 —— 换考试后题目全变了，旧现场没有意义。
+ * @returns {boolean} 是否成功续答
+ */
+function resumeFromSession() {
+  const restored = restoreSession(store.readSession(SESSION_KEY), {
+    expect: { exam: store.currentExam.value },
+    isKnownId: (id) => Boolean(store.getQuestion(id)),
+  })
+  if (!restored) return false
+  paper.value = restored.ids.map((id) => store.getQuestion(id)).filter(Boolean)
+  index.value = restored.index
+  responses.value = restored.responses
+  checkedIds.value = restored.checkedIds
+  result.value = null
+  resumed.value = true
+  phase.value = 'running'
+  return true
+}
+
+/** 介绍页的「开始摸底」：能续答就续答，否则开一份新的 */
+function start() {
+  if (resumeFromSession()) return
+  newPaper()
+}
+
+/** 放弃当前现场重开一轮（现场卡住时的兜底出口） */
+function restart() {
+  store.clearSession(SESSION_KEY)
+  newPaper()
+}
+
+/**
+ * 挂载时只做"能不能续答"这件事：
+ * 有现场就直接回到答题态，没有就**停在介绍页**等用户点开始 ——
+ * 不能顺手开一份新试卷，那会把介绍页和"准备开始"的心理预期一起跳过。
+ */
+onMounted(() => {
+  if (!resumeFromSession()) phase.value = 'intro'
+})
 
 function skip() {
   store.updateSettings({ diagnosticSkipped: true })
@@ -76,17 +140,20 @@ function toggleResponse(key) {
     }
   }
   responses.value = { ...responses.value, [q.id]: [...cur] }
+  persist()
 }
 
 function submit() {
   const q = currentQ.value
   if (!q || !hasSelection.value) return
   checkedIds.value = [...checkedIds.value, q.id]
+  persist()
 }
 
 function next() {
   if (index.value + 1 < total.value) {
     index.value += 1
+    persist()
     scrollToTop()
   } else {
     finish()
@@ -125,6 +192,8 @@ function finish() {
     details: graded.details,
     answers: responses.value,
   })
+  // 结果已落库，现场不再需要（留着下次进来会重新恢复到答题态）
+  store.clearSession(SESSION_KEY)
   result.value = { graded, byDomain, domainScore }
   phase.value = 'result'
 }
@@ -168,12 +237,16 @@ const weightedScore = computed(() => {
         <li><span>题量</span><b>{{ DIAGNOSTIC_COUNT }} 题</b></li>
         <li><span>覆盖</span><b>{{ store.domains.value.length }} 个知识域</b></li>
         <li><span>预计用时</span><b>约 {{ Math.round((DIAGNOSTIC_COUNT * 1.2) / 5) * 5 }} 分钟</b></li>
-        <li><span>是否计时</span><b>不计时，可随时中断</b></li>
+        <li><span>是否计时</span><b>不计时，中断可续答</b></li>
       </ul>
 
       <p class="note">
         每答完一题才会显示该题对错与解析。全部答完后给出分域掌握度与建议学习顺序。
         没把握的题可以凭直觉选，猜错的信息同样有用。
+      </p>
+      <p class="note">
+        中途退出、切后台、刷新都不会丢作答，下次进来接着上次那一题继续；
+        <b>答完 {{ DIAGNOSTIC_COUNT }} 题才会计入掌握度</b>，半途而废不会污染起点。
       </p>
 
       <div class="actions">
@@ -194,6 +267,10 @@ const weightedScore = computed(() => {
         />
       </div>
 
+      <p v-if="resumed" class="resume-hint">
+        已接着上次的进度继续（第 {{ index + 1 }} / {{ total }} 题），之前答过的都还在。
+      </p>
+
       <QuestionCard
         v-if="currentQ"
         :question="currentQ"
@@ -210,6 +287,13 @@ const weightedScore = computed(() => {
         <Chip v-else block @click="next">
           {{ index + 1 < total ? '下一题' : '查看摸底结果' }}
         </Chip>
+      </div>
+
+      <div class="foot">
+        <button class="link" @click="restart">重新开始本次摸底</button>
+        <!-- 不能用 emit('go','today')：摸底没完成时 HcipPage 会把人拽回摸底页，
+             要离开只能显式跳过（skip 会置 diagnosticSkipped） -->
+        <button class="link" @click="skip">跳过摸底，直接开始学习</button>
       </div>
     </template>
 
@@ -452,5 +536,31 @@ const weightedScore = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.resume-hint {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--cyan);
+  border-left: 2px solid var(--cyan);
+  padding-left: 11px;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.link {
+  background: none;
+  border: none;
+  padding: 8px 2px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  touch-action: manipulation;
 }
 </style>

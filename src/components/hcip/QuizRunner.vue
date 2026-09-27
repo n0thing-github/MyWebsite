@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStudyStore } from '../../study/useStudyStore'
+import { restoreSession, createSession } from '../../study/session'
 import { useStudyPlan, shuffle } from '../../study/useStudyPlan'
 import { isCorrect, isPartial } from '../../study/grading'
 import QuestionCard from './QuestionCard.vue'
@@ -23,7 +24,9 @@ const store = useStudyStore()
 const { plan } = useStudyPlan()
 
 const SESSION_KEY = 'quiz'
-const session = ref({ ids: [], index: 0, responses: {}, checkedIds: [], mode: '' })
+const session = ref(createSession({ mode: '' }))
+/** 本轮是否来自现场恢复（给用户一句提示，免得以为题号跳了） */
+const resumed = ref(false)
 
 const queue = computed(() => session.value.ids.map((id) => store.getQuestion(id)).filter(Boolean))
 const currentQ = computed(() => queue.value[session.value.index] || null)
@@ -47,17 +50,19 @@ function buildQueue() {
 }
 
 function start() {
-  const saved = store.readSession(SESSION_KEY)
-  // 只恢复同一模式的现场，避免"今日"现场串到"错题"模式里
-  if (saved && saved.mode === props.mode && Array.isArray(saved.ids) && saved.ids.length) {
-    // 过滤掉已不在题库里的 id（例如导入题库被清空）
-    const valid = saved.ids.filter((id) => store.getQuestion(id))
-    if (valid.length) {
-      session.value = { ...saved, ids: valid, index: Math.min(saved.index, valid.length - 1) }
-      return
-    }
+  // 只恢复同一模式的现场，避免"今日"现场串到"错题"模式里；
+  // 已不在题库里的 id 会被丢弃（例如导入题库被清空）
+  const restored = restoreSession(store.readSession(SESSION_KEY), {
+    expect: { mode: props.mode },
+    isKnownId: (id) => Boolean(store.getQuestion(id)),
+  })
+  if (restored) {
+    session.value = { ...restored, mode: props.mode }
+    resumed.value = restored.index > 0
+    return
   }
-  session.value = { ids: buildQueue(), index: 0, responses: {}, checkedIds: [], mode: props.mode }
+  session.value = createSession({ ids: buildQueue(), mode: props.mode })
+  resumed.value = false
   persist()
 }
 
@@ -145,7 +150,8 @@ function finish() {
 
 function restart() {
   store.clearSession(SESSION_KEY)
-  session.value = { ids: buildQueue(), index: 0, responses: {}, checkedIds: [], mode: props.mode }
+  session.value = createSession({ ids: buildQueue(), mode: props.mode })
+  resumed.value = false
   persist()
 }
 
@@ -210,6 +216,10 @@ const hasSelection = computed(() => response.value.length > 0)
         </span>
       </div>
 
+      <p v-if="resumed && answeredCount" class="resume-hint">
+        已接着上次的进度继续（第 {{ session.index + 1 }} 题），之前答过的都还在。
+      </p>
+
       <QuestionCard
         v-if="currentQ"
         :question="currentQ"
@@ -266,6 +276,14 @@ const hasSelection = computed(() => response.value.length > 0)
   font-size: 11px;
   color: var(--text-dim);
   text-align: right;
+}
+
+.resume-hint {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--cyan);
+  border-left: 2px solid var(--cyan);
+  padding-left: 11px;
 }
 
 .feedback {

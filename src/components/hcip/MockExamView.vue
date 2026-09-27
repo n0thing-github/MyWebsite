@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useStudyStore } from '../../study/useStudyStore'
+import { restoreSession } from '../../study/session'
 import { buildPaper, shuffle } from '../../study/useStudyPlan'
 import { gradePaper, gradeByDomain, isCorrect } from '../../study/grading'
 import { formatClock } from '../../study/dateUtil'
@@ -101,15 +102,18 @@ function persist() {
   })
 }
 
-/** 恢复未交卷的模考现场 */
+/** 恢复未交卷的模考现场（校验规则与刷题/摸底共用一套） */
 function restore() {
-  const saved = store.readSession(SESSION_KEY)
-  if (!saved || saved.phase !== 'running' || !Array.isArray(saved.ids) || !saved.ids.length) return false
+  const saved = restoreSession(store.readSession(SESSION_KEY), {
+    expect: { phase: 'running' },
+    isKnownId: (id) => Boolean(store.getQuestion(id)),
+  })
+  if (!saved) return false
   const items = saved.ids.map((id) => store.getQuestion(id)).filter(Boolean)
   if (!items.length) return false
   paper.value = items
   responses.value = saved.responses || {}
-  index.value = Math.min(saved.index || 0, items.length - 1)
+  index.value = Math.min(saved.index, items.length - 1)
   endAt.value = saved.endAt || 0
   scope.value = saved.scope || 'full'
   remaining.value = Math.max(0, Math.round((endAt.value - Date.now()) / 1000))
