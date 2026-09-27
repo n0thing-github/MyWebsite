@@ -188,6 +188,15 @@ img {
   transform: translateY(0);
 }
 
+/* 滚动锁：备考模块的底部抽屉打开时锁住底层滚动。
+   与 NavBar 的 .menu-open 同一套思路（锁 html 而不是写 body inline style），
+   避免多处写 inline style 互相覆盖，也避开 iOS 对 body{overflow:hidden} 不生效的问题。 */
+html.sheet-open,
+html.sheet-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
   .section {

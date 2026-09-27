@@ -9,12 +9,19 @@ import { ref } from 'vue'
  *   history 模式下刷新/直达任何子路由都会 404；hash 模式在任意静态托管下都可靠。
  *
  * 命名空间约定（关键，避免与站内锚点冲突）：
- *   '#/ebbinghaus' 以及任何 '#/xx'  → 页面路由
+ *   '#/hcip/quiz' 以及任何 '#/xx'  → 页面路由（可带子视图）
  *   '#home' '#about' '#skills' ...  → 主页锚点，仍然停留在 home，滚动交给浏览器原生行为
  */
 
+/**
+ * 页面路由表。
+ * 带 sub 的页面把子视图放在第二段（如 #/hcip/quiz），
+ * 用同一个组件 + 子视图切换，而不是给每个标签页建一个路由 ——
+ * 底部标签栏切换时不需要重新挂载整个页面，移动端更顺。
+ */
 const ROUTES = {
-  '/ebbinghaus': 'ebbinghaus',
+  '/ebbinghaus': { route: 'ebbinghaus' },
+  '/hcip': { route: 'hcip', sub: 'today' },
 }
 
 /** 主页上本来就存在的锚点，明确列出来以便与未来新增的页面路由区分 */
@@ -30,11 +37,22 @@ const HOME_ANCHORS = new Set([
 function parse(hash) {
   const raw = (hash || '').replace(/^#/, '')
   if (raw.startsWith('/')) {
-    return ROUTES[raw] || 'home'
+    const segments = raw.split('/').filter(Boolean)
+    const hit = ROUTES[`/${segments[0] || ''}`]
+    if (hit) {
+      // 未指定子视图时用路由默认值（如 #/hcip → today）
+      return { route: hit.route, sub: segments[1] || hit.sub || '' }
+    }
+    return { route: 'home', sub: '' }
   }
-  if (raw === '' || HOME_ANCHORS.has(raw)) return 'home'
+  if (raw === '' || HOME_ANCHORS.has(raw)) return { route: 'home', sub: '' }
   // 未知的裸锚点（例如未来新增的 section）按主页锚点处理，滚动由浏览器负责
-  return 'home'
+  return { route: 'home', sub: '' }
+}
+
+/** 生成 hash 链接，避免调用方手拼字符串时漏掉 '/' */
+export function hcipLink(sub = '') {
+  return sub ? `#/hcip/${sub}` : '#/hcip'
 }
 
 /**
@@ -71,10 +89,14 @@ function resetScroll() {
 let listenerBound = false
 
 function handleHashChange() {
-  route.value = parse(window.location.hash)
+  const next = parse(window.location.hash)
+  route.value = next.route
+  subRoute.value = next.sub
 }
 
-const route = ref(typeof window === 'undefined' ? 'home' : parse(window.location.hash))
+const initial = typeof window === 'undefined' ? { route: 'home', sub: '' } : parse(window.location.hash)
+const route = ref(initial.route)
+const subRoute = ref(initial.sub)
 
 export function useRoute() {
   if (typeof window !== 'undefined' && !listenerBound) {
@@ -83,7 +105,28 @@ export function useRoute() {
     listenerBound = true
   }
 
-  return { route, go }
+  return { route, subRoute, go }
+}
+
+/**
+ * 子视图切换。
+ * 只在 route === 'hcip' 时生效：直接改 hash 会触发 hashchange，
+ * 但底部标签栏切换希望是"原地切"而不是整页重挂，
+ * 所以这里同时更新 ref 与 hash（更新 ref 让界面立刻响应，写 hash 保证可分享/可刷新）。
+ */
+export function setSubRoute(sub) {
+  if (typeof window === 'undefined') return
+  const next = hcipLink(sub === 'today' ? '' : sub)
+  subRoute.value = sub
+  if (window.location.hash !== next) {
+    // 用 replaceState 而不是赋值 hash：切标签不产生历史记录，
+    // 否则手机返回键要按五六次才能退出备考页
+    try {
+      window.history.replaceState(null, '', next)
+    } catch {
+      window.location.hash = next
+    }
+  }
 }
 
 /**

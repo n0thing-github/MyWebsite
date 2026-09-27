@@ -1,0 +1,3163 @@
+[
+  {
+    "id": "831-igp-advanced-0001",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "某企业 OSPF 网络中，管理员修改了某台路由器上 Loopback0 接口的 IP 地址（该接口已通过 network 命令使能 OSPF）。在支持 PRC（Partial Route Calculation）的设备上，路由器对这次变化的路由计算方式是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "触发完整的 SPF 计算，重新计算整棵最短路径树"
+      },
+      {
+        "key": "B",
+        "text": "只进行部分路由计算，仅更新与该网段相关的路由，不重算最短路径树"
+      },
+      {
+        "key": "C",
+        "text": "只进行 LSA 洪泛，不触发任何路由计算"
+      },
+      {
+        "key": "D",
+        "text": "触发 I-SPF，重新计算受影响节点的最短路径树，但不进行 PRC"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：接口 IP 地址变化属于叶子（stub）网络的变化，只改变 Type-1/Type-2 LSA 中描述的可达网段，不改变区域内的拓扑结构。PRC 只重算受影响的路由条目，无需重算 SPT，开销远小于 I-SPF。I-SPF 用于拓扑变化（链路状态改变、节点增减），且只重算受影响节点的 SPT，因此 A、D 混淆了两种增量计算；C 错，路由信息变了必须重算路由。",
+    "tags": [
+      "OSPF",
+      "PRC",
+      "快速收敛"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-igp-advanced-0002",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "运行 OSPF 的路由器上，某条链路状态发生变化（up 变 down）。若设备支持 I-SPF（Incremental SPF），其计算行为是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "忽略该变化，等待下一次周期性 SPF 计算"
+      },
+      {
+        "key": "B",
+        "text": "重新计算整棵最短路径树，所有节点都参与计算"
+      },
+      {
+        "key": "C",
+        "text": "只重新计算受该变化影响的节点，未受影响的节点直接沿用原有 SPT 结果"
+      },
+      {
+        "key": "D",
+        "text": "只更新直连路由，其他路由器不受影响"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explain": "解析：I-SPF 在拓扑变化时，通过比较变化前后的最短路径树，只对受影响的那部分节点重新计算，其余节点的 SPT 结果直接复用，从而降低 CPU 开销、加快收敛。A 错，OSPF 对拓扑变化是立即响应的；B 是传统全量 SPF 的做法；D 错，链路状态变化会通过 LSA 洪泛到整个区域，所有路由器都要重新计算受影响部分。",
+    "tags": [
+      "OSPF",
+      "I-SPF",
+      "快速收敛"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-igp-advanced-0003",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "multi",
+    "stem": "在大规模 OSPF 网络中，为减小 LSA 洪泛与 LSDB 规模带来的开销，可采取的措施包括哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "在 ABR 上使用 abr-summary 对区域间路由进行聚合，减少进入其他区域的 Type-3 LSA 数量"
+      },
+      {
+        "key": "B",
+        "text": "在 ASBR 上使用 asbr-summary 对引入的外部路由进行聚合，减少 Type-5 LSA 数量"
+      },
+      {
+        "key": "C",
+        "text": "合理划分区域，把拓扑变化频繁的网段划入独立区域，并用 stub/NSSA 区域阻挡外部 LSA 进入"
+      },
+      {
+        "key": "D",
+        "text": "把 OSPF 的 LSA 老化时间（aging）设置为无限大，使 LSA 永不重传，从而彻底消除洪泛"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：路由聚合是减少 LSA 数量最直接的手段——ABR 聚合 Type-3、ASBR 聚合 Type-5/Type-7；合理划分区域并配合 stub/NSSA 可以把大量外部 LSA 挡在区域之外，只在 ABR 上用一个缺省路由代替。D 错：OSPF 的 LSA 有 MaxAge（3600 秒）老化与 1800 秒周期性刷新，不存在“永不老化”的配置，取消重传还会破坏 LSDB 同步的可靠性。",
+    "tags": [
+      "OSPF",
+      "路由聚合",
+      "LSA"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-igp-advanced-0004",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "关于 OSPF 与 IS-IS 的比较，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "OSPF 基于 TCP 承载协议报文，IS-IS 直接封装在数据链路层之上"
+      },
+      {
+        "key": "B",
+        "text": "IS-IS 的 LSP 只在区域内洪泛，区域间通过 Level-2 传递路由信息，天然支持大规模网络的分层扩展"
+      },
+      {
+        "key": "C",
+        "text": "IS-IS 使用 IP 协议号 89，OSPF 使用 IP 协议号 88"
+      },
+      {
+        "key": "D",
+        "text": "OSPF 的所有 LSA 都只能在单个区域内洪泛，因此不支持分层设计"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：IS-IS 采用 Level-1/Level-2 两级结构，Level-1 LSP 只在区域内洪泛，跨区域信息由 Level-2 LSP 承载，L1/L2 路由器负责层间路由，这种设计使其在大规模网络中扩展性很好。A 错：OSPF 直接在 IP 之上运行（协议号 89），不使用 TCP；IS-IS 则直接封装在链路层帧之上。C 错：IS-IS 的 IP 协议号是 124，OSPF 是 89。D 错：OSPF 的 Type-3 LSA 由 ABR 生成并在区域间传递，本身支持分层。",
+    "tags": [
+      "OSPF",
+      "IS-IS",
+      "协议选型"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-igp-advanced-0005",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "multi",
+    "stem": "某运营商骨干网选用 IS-IS 而不是 OSPF 承载大量路由，下列哪些特性是常见的选型理由？",
+    "options": [
+      {
+        "key": "A",
+        "text": "IS-IS 报文直接封装在链路层，不依赖 IP 层可达性，且通过 TLV 扩展，对新协议的支持只需新增 TLV"
+      },
+      {
+        "key": "B",
+        "text": "IS-IS 的 Level-1/Level-2 结构与路由渗透机制便于构建扁平化的大型骨干，单区域可承载的设备规模通常更大"
+      },
+      {
+        "key": "C",
+        "text": "IS-IS 采用 SPF 算法且支持路由聚合与路由渗透，收敛行为可预期，便于在大规模拓扑中做快速收敛调优"
+      },
+      {
+        "key": "D",
+        "text": "IS-IS 使用 TCP 179 端口建立邻居关系，具备可靠传输能力"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：IS-IS 的 TLV（Type-Length-Value）结构使其具备良好的可扩展性，IPv6 支持只需定义新的 TLV（如 IPv6 Reachability），协议本身改动很小；其两级结构与路由渗透适合扁平化大规模组网；同为链路状态协议，同样支持聚合与增量 SPF。D 错：179 端口是 BGP 的，IS-IS 是通过链路层组播（如 01-80-C2-00-00-14/15）直接交互 Hello/SNP/LSP，不建立 TCP 连接。",
+    "tags": [
+      "IS-IS",
+      "TLV",
+      "协议选型"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-igp-advanced-0006",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "OSPF 中 ABR 会把本区域路由通告进骨干区域、并从骨干区域学习其他区域的路由，但不会把一个非骨干区域的路由直接注入另一个非骨干区域。OSPF 防止区域间路由环路的根本机制是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "依靠 Type-3 LSA 中 Metric 的大小比较，度量值大的路由自动被丢弃"
+      },
+      {
+        "key": "B",
+        "text": "强制所有非骨干区域必须与骨干区域相连，区域间路由必须经骨干区域中转，形成以 Area 0 为中心的星型拓扑"
+      },
+      {
+        "key": "C",
+        "text": "依靠 LSA 序列号，序列号小的 LSA 被直接丢弃"
+      },
+      {
+        "key": "D",
+        "text": "依靠 DD 报文中的 Master/Slave 协商结果"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：OSPF 区域间采用“星型”拓扑约束——所有非骨干区域必须与 Area 0 相连，ABR 只把本区域路由注入骨干、并只从骨干学习其他区域的路由，不允许两个非骨干区域之间直接交换 Type-3 LSA，从而在拓扑层面消除了区域间环路的可能。C 的序列号用于判定 LSA 新旧，不是防环机制；D 的 Master/Slave 协商用于 DD 交互，与防环无关；A 的更优度量只决定选路，不能防环。",
+    "tags": [
+      "OSPF",
+      "路由防环",
+      "区域"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-igp-advanced-0007",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "judge",
+    "stem": "判断：接口反复 up/down 会导致路由不断撤销与重新发布，可以在接口上配置 dampening（接口震荡抑制），使接口在抑制期内保持 down 状态，从而减少对上层路由协议的冲击。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。华为设备支持在接口下配置 `dampening`，其原理与路由衰减类似：接口每次 up/down 会增加惩罚值，惩罚值超过 Suppress 门限时接口被抑制（保持在 down），惩罚值按半衰期指数衰减，降到 Reuse 门限以下后接口才恢复。这样可以避免物理链路抖动被放大为全网的 IGP 路由震荡与频繁 SPF 计算。",
+    "tags": [
+      "路由震荡抑制",
+      "dampening",
+      "接口"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-igp-advanced-0008",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "某 OSPF 网络运行在千兆以太链路上，管理员希望加快邻居失效检测。下列做法最直接有效且不破坏协议语义的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "在接口下执行 ospf timer hello 3，并按需显式指定 dead 定时器（同一网段两端必须一致）"
+      },
+      {
+        "key": "B",
+        "text": "在 OSPF 进程下增大 SPF 计算定时器的值"
+      },
+      {
+        "key": "C",
+        "text": "在接口下增大 ospf trans-delay 的值"
+      },
+      {
+        "key": "D",
+        "text": "把接口网络类型改为 nbma，以减少 Hello 报文的发送次数"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：缩小 Hello 间隔可以缩短 Dead 定时器（广播/P2P 类型下 Dead 通常为 Hello 的 4 倍），从而更快感知邻居失效。关键约束是同一网段内所有路由器的 Hello/Dead 必须一致，否则 Hello 校验失败、邻居无法建立。B 增大 SPF 定时器只会让计算更慢；C 的 trans-delay 用于估算 LSA 在接口上的传输延迟，不影响失效检测速度；D 改为 NBMA 需要手工配置邻居，与加快检测无关。",
+    "tags": [
+      "OSPF",
+      "定时器",
+      "快速收敛"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-igp-advanced-0009",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "multi",
+    "stem": "关于 OSPF 的 SPF 计算与各类 LSA 的关系，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Router-LSA（Type-1）与 Network-LSA（Type-2）描述区域内的拓扑，参与 SPT 的最短路径树计算"
+      },
+      {
+        "key": "B",
+        "text": "Type-3/5/7 LSA 描述的是路由信息而非拓扑信息，通常通过 PRC 计算，不改变 SPT"
+      },
+      {
+        "key": "C",
+        "text": "区域内拓扑发生变化时，所有路由器都必须重新计算整棵树，无法做增量计算"
+      },
+      {
+        "key": "D",
+        "text": "I-SPF 与 PRC 常配合使用：先由 I-SPF 更新受影响节点的 SPT，再由 PRC 更新受影响的叶子路由"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explain": "解析：SPF 只用 Type-1/Type-2 构造区域内的有向图并计算 SPT；Type-3/5/7 携带的是前缀与度量信息，挂在 SPT 的节点上，用 PRC 更新即可。现代设备普遍支持增量计算，因此 C 是错的。D 描述的是实际实现中的配合方式：拓扑变化先走 I-SPF，前缀变化走 PRC，两者结合避免全量重算。",
+    "tags": [
+      "OSPF",
+      "SPF",
+      "LSA"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-igp-advanced-0010",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "在 IS-IS 中，Level-1-2 路由器通过置位 ATT 比特向 Level-1 区域下发缺省路由。若某 Level-1 区域内存在多台 L1/L2 路由器，为防止次优路径，常见做法是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "在 L1/L2 路由器上配置路由渗透，把关心的 Level-2 明细路由引入 Level-1，并用路由策略控制渗透范围"
+      },
+      {
+        "key": "B",
+        "text": "关闭 L1/L2 路由器的 ATT 比特置位功能"
+      },
+      {
+        "key": "C",
+        "text": "把所有 Level-1 路由器都升级为 Level-2 路由器"
+      },
+      {
+        "key": "D",
+        "text": "把 Level-1 区域的 metric-style 改为 narrow"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：只靠 ATT 缺省路由时，Level-1 路由器无法区分不同 L1/L2 路由器后面的具体目的地址，容易把流量交给并非最优的那台出口设备，形成次优甚至环路。路由渗透（import-route isis level-2 into level-1）把部分 Level-2 明细路由引入 Level-1，使 L1 路由器按明细选路；同时必须用 filter-policy 限定渗透范围，否则 L1 设备的 LSDB 与路由表会被撑大。B 会导致 L1 区域完全失去出口；C 会破坏分层设计；D 只影响度量编码方式，与选路优化无关。",
+    "tags": [
+      "IS-IS",
+      "路由渗透",
+      "ATT"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-igp-advanced-0011",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "single",
+    "stem": "某路由器在 OSPF 区域内先收到了一份某 LSA 的较新实例，随后又收到了该 LSA 的一个更旧的实例（LS Sequence Number 更小）。根据 OSPF 的 LSA 处理规则，该路由器的行为是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "接受旧实例并回送一份更新实例，使 LSDB 短暂回退到旧版本"
+      },
+      {
+        "key": "B",
+        "text": "丢弃旧实例，并把本地保存的较新实例回送给发送该旧实例的邻居"
+      },
+      {
+        "key": "C",
+        "text": "同时丢弃两个实例，等 MaxAge 到期后重新洪泛"
+      },
+      {
+        "key": "D",
+        "text": "向 DR 发送 LS Request，请求同步整个 LSDB"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：OSPF 用 LS Sequence Number、LS Age、LS Checksum 共同判断 LSA 实例的新旧，序列号更大的更新。收到更旧的实例时，路由器不会接受它，而是向来源邻居回送本地较新的实例，使对方尽快修正 LSDB。A 违反“只接受更新实例”的原则；C 会导致 LSA 长时间缺失；D 中 LS Request 用于请求本地缺失的 LSA，不是这种情况下的动作。",
+    "tags": [
+      "OSPF",
+      "LSA",
+      "LSDB 同步"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-igp-advanced-0012",
+    "exam": "H12-831",
+    "domain": "igp-advanced",
+    "type": "multi",
+    "stem": "下列关于各类路由协议防环机制的描述，正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "OSPF 通过区域星型结构（非骨干区域必须与 Area 0 相连）防止区域间路由环路"
+      },
+      {
+        "key": "B",
+        "text": "IS-IS 通过 Level-1 与 Level-2 的分层，以及 L1/L2 路由器不会把 Level-1 学到路由再回传给 Level-1 的规则防止层间环路"
+      },
+      {
+        "key": "C",
+        "text": "BGP 通过 AS_Path 记录路由经过的 AS 号，收到含本 AS 号的路由时予以丢弃，防止 AS 间环路"
+      },
+      {
+        "key": "D",
+        "text": "RIP 使用水平分割与毒性逆转防环，OSPF 也使用相同的水平分割机制防止区域间环路"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：A、B、C 分别是 OSPF 区域间、IS-IS 层间、BGP AS 间的经典防环机制。D 错：水平分割、毒性逆转是距离矢量协议（RIP）依靠“邻居通告的路由不再回传”来防环的手段；OSPF 是链路状态协议，每台路由器基于完整的区域拓扑用 SPF 独立计算，不使用水平分割防环。",
+    "tags": [
+      "路由防环",
+      "OSPF",
+      "IS-IS",
+      "BGP"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-bgp-advanced-0001",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "管理员为两台直连路由器之间的 BGP 邻居配置 MD5 认证，但只在其中一台设备上配置了口令，另一台未配置。该 BGP 邻居的状态会是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "能够进入 Established，但只发送路由不接收路由"
+      },
+      {
+        "key": "B",
+        "text": "一直停留在 Idle/Active 之间，TCP 连接无法建立，邻居始终不能进入 OpenSent"
+      },
+      {
+        "key": "C",
+        "text": "能够进入 Established，认证失败只影响 Update 报文的处理"
+      },
+      {
+        "key": "D",
+        "text": "先进入 OpenSent，超时后回退到 Idle 并周期性重复"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：BGP 的 MD5 认证（RFC 2385）是在 TCP 层对报文段做摘要校验的，两端口令不一致时，带错误摘要的报文（包括 SYN）会被对端直接丢弃，TCP 三次握手无法完成，因此 BGP 连接建立不起来，邻居停留在 Idle/Active。由于 TCP 都未建立，绝不可能进入 OpenSent/Established，故 A、C、D 均错。",
+    "tags": [
+      "BGP",
+      "MD5",
+      "安全"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-bgp-advanced-0002",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "某 ASBR 与 ISP 建立 eBGP 邻居。为防御伪造源地址的 BGP 报文攻击，管理员计划部署 GTSM（Generalized TTL Security Mechanism）。其工作原理是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "对 BGP 报文做 MD5 摘要校验，防止报文被篡改"
+      },
+      {
+        "key": "B",
+        "text": "发送端把 BGP 报文的 TTL 置为 255，接收端要求报文 TTL 不小于约定的门限（与跳数相关），从而丢弃经过额外跳数的伪造报文"
+      },
+      {
+        "key": "C",
+        "text": "使用 IPsec 对 BGP 报文进行加密和完整性校验"
+      },
+      {
+        "key": "D",
+        "text": "把 BGP 邻居的 TCP 端口从 179 改为私有端口，避免被扫描"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：GTSM（RFC 5082）的思路是“不可能被伪造的 TTL”——发送方把 BGP 报文的 TTL 固定为 255，接收方配置允许的最大跳数 hops，只接受 TTL 落在 [256-hops, 255] 区间内的报文（华为命令为 `peer <ip> valid-ttl-hops hops`）。来自多跳之外的攻击报文 TTL 必然小于门限而被丢弃。A 是 MD5 认证、C 是 IPsec，虽也能提升安全性但不是 GTSM 原理；D 只是端口隐藏，不防伪造。",
+    "tags": [
+      "BGP",
+      "GTSM",
+      "安全"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-bgp-advanced-0003",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "multi",
+    "stem": "某企业网 BGP 邻居经常因链路抖动而反复重建，路由收敛慢。下列哪些措施有助于加快 BGP 收敛或减少会话震荡？",
+    "options": [
+      {
+        "key": "A",
+        "text": "部署 BFD for BGP，实现毫秒级故障检测，并在检测到故障后立即重置 BGP 会话，而不必等待 Hold 定时器超时"
+      },
+      {
+        "key": "B",
+        "text": "为 iBGP 邻居部署路由反射器（RR）或联盟，避免全互联导致的会话数量平方级增长，缩短路由传播路径"
+      },
+      {
+        "key": "C",
+        "text": "合理配置 connect-interface 与 next-hop-local，保证 BGP 路由的下一跳在 IGP 中可达，减少路由因下一跳不可达而不被优选"
+      },
+      {
+        "key": "D",
+        "text": "同时增大 peer timer keepalive 与 Hold 时间，可以显著加快邻居失效的检测速度"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：BFD 提供与协议无关的快速检测并联动 BGP 立即重置会话，是加快收敛最有效的手段；RR/联盟降低 iBGP 会话规模、缩短路由在 AS 内的传播跳数；正确设置 connect-interface（尤其用 Loopback 建邻居）与 next-hop-local 能避免“路由收到了但下一跳不可达所以不优选”的情况。D 错：增大 Keepalive/Hold 会让失效检测更慢，方向相反。",
+    "tags": [
+      "BGP",
+      "收敛优化",
+      "BFD",
+      "路由反射器"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-bgp-advanced-0004",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "管理员在 BGP 进程下配置了路由衰减（dampening）。某条路由在短时间内反复振荡后被抑制（damped）。关于被抑制期间该路由的处理，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "该路由被抑制期间不再通告给任何邻居，但本机仍把它优选并放入转发表"
+      },
+      {
+        "key": "B",
+        "text": "该路由既不参与优选也不向邻居通告；当惩罚值衰减到 Reuse 门限以下时，路由被重新启用"
+      },
+      {
+        "key": "C",
+        "text": "该路由立即被从 BGP 路由表中删除，惩罚值同时清零"
+      },
+      {
+        "key": "D",
+        "text": "惩罚值只增不减，必须手工执行 reset bgp dampening 才能恢复"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：BGP 路由衰减用惩罚值衡量振荡：每次路由撤销/重新宣告增加惩罚值，超过 Suppress 门限后路由被抑制（Huawei 默认 Suppress 为 2000、Reuse 为 750、半衰期 15 分钟）。被抑制的路由既不优选也不通告，惩罚值按半衰期指数衰减，降到 Reuse 以下后重新启用。A 错（被抑制路由不会被优选和下发）；C 错（路由被抑制而非删除）；D 错（有自动衰减，也可用命令手工清除）。",
+    "tags": [
+      "BGP",
+      "dampening",
+      "路由震荡"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-bgp-advanced-0005",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "multi",
+    "stem": "某大型企业有 300 台设备需要运行 BGP 组成同一个 AS。为降低 iBGP 会话数量与配置复杂度，下列设计方法可行的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "部署路由反射器（RR），划分客户端与非客户端，由 RR 负责在客户端之间反射路由"
+      },
+      {
+        "key": "B",
+        "text": "使用 BGP 联盟（Confederation），把 AS 内部划分为多个子 AS，子 AS 内全互联、子 AS 之间通过联盟 eBGP 传递路由"
+      },
+      {
+        "key": "C",
+        "text": "关闭 iBGP 的水平分割（即允许 iBGP 学到的路由再转发给其他 iBGP 邻居），使全互联不再必要"
+      },
+      {
+        "key": "D",
+        "text": "使用 peer group（对等体组）批量下发策略与定时器配置，减少重复配置量"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explain": "解析：解决 iBGP 全互联规模问题的标准手段就是 RR 与联盟，二者都能把会话数量从 O(n²) 降到可控规模；对等体组只是配置层面的优化，减少重复命令行但不改变会话数量，仍是有价值的运维手段。C 错：iBGP 水平分割（从 iBGP 邻居学到的路由不再转发给其他 iBGP 邻居）是为了防止 AS 内环路，BGP 没有也不应该提供关闭它的开关，绕过它的正确方式就是 RR 或联盟。",
+    "tags": [
+      "BGP",
+      "路由反射器",
+      "联盟",
+      "大规模设计"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-bgp-advanced-0006",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "两台华为路由器建立 eBGP 邻居，本端配置 Keepalive 30 秒、Hold 90 秒，对端配置 Keepalive 60 秒、Hold 180 秒。邻居建立后实际生效的定时器是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hold 时间取两端较小值 90 秒，Keepalive 为 Hold 的 1/3 即 30 秒"
+      },
+      {
+        "key": "B",
+        "text": "Hold 时间取两端较大值 180 秒，Keepalive 为 60 秒"
+      },
+      {
+        "key": "C",
+        "text": "两端各自按本地配置运行，互不影响"
+      },
+      {
+        "key": "D",
+        "text": "取两端配置的平均值：Hold 135 秒、Keepalive 45 秒"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：Open 报文中携带 Hold Time，邻居建立后取两端较小的 Hold 值作为协商结果，Keepalive 间隔为协商后 Hold 的 1/3，因此实际生效 Hold=90 秒、Keepalive=30 秒。B 取大值、D 取平均值都违背 BGP 的协商规则；C 错，如果两端各按自己的定时器运行，一方按 180 秒判定超时而另一方按 90 秒发送，会导致邻居关系异常，BGP 明确要求按协商值运行。",
+    "tags": [
+      "BGP",
+      "定时器",
+      "Open 报文"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-bgp-advanced-0007",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "multi",
+    "stem": "关于路由反射器（RR）的反射规则与防环机制，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "从客户端学到的路由会反射给所有其他客户端和非客户端；从非客户端学到的路由只反射给客户端"
+      },
+      {
+        "key": "B",
+        "text": "引入 Originator_ID 属性，其值为路由发起者的 Router ID，接收者发现 Originator_ID 与本机 Router ID 相同则丢弃该路由"
+      },
+      {
+        "key": "C",
+        "text": "引入 Cluster_List 属性，记录路由经过的 Cluster ID，RR 收到 Cluster_List 中含本 Cluster ID 的路由时予以丢弃"
+      },
+      {
+        "key": "D",
+        "text": "RR 依靠 AS_Path 中的 AS_CONFED 段来防止同一集群内的环路"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：A 是 RR 的标准反射规则（客户端→所有客户端+非客户端；非客户端→仅客户端；eBGP 路由→所有客户端与非客户端）。B、C 是 RR 引入的两个防环属性：Originator_ID 防止路由回到发起者，Cluster_List 防止路由在同一集群内被反复反射。D 错：AS_CONFED 段是联盟（Confederation）用来防止子 AS 之间环路的属性，与 RR 集群内防环无关。",
+    "tags": [
+      "BGP",
+      "路由反射器",
+      "Originator_ID",
+      "Cluster_List"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-bgp-advanced-0008",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "某设备上存在两条去往同一目的网段的 BGP 路由：路由 1 的 Local_Pref 为 200、MED 为 50、AS_Path 长度为 3；路由 2 的 Local_Pref 为 200、MED 为 100、AS_Path 长度为 2。两条路由均为 eBGP 学习、Origin 相同、均非聚合也非本地引入，设备优选？",
+    "options": [
+      {
+        "key": "A",
+        "text": "路由 1，因为 MED 更小"
+      },
+      {
+        "key": "B",
+        "text": "路由 2，因为 AS_Path 更短"
+      },
+      {
+        "key": "C",
+        "text": "路由 1，因为 MED 的比较优先级高于 AS_Path"
+      },
+      {
+        "key": "D",
+        "text": "无法确定，必须比较 Router ID"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：华为 BGP 的选路顺序为 Preferred-Value(Weight) → Local_Pref → 本地始发 → AS_Path 长度 → Origin → MED → eBGP 优于 iBGP → 到 Next_Hop 的 IGP Metric → 较老的 eBGP 路由 → Router ID 小者 → Cluster_List 短者 → 邻居 IP 小者。AS_Path 的比较在 MED 之前，因此 AS_Path 更短的路由 2 被优选。A、C 都把 MED 的优先级理解错了；D 错，只有前面所有条件都相同时才会比较 Router ID。",
+    "tags": [
+      "BGP",
+      "选路规则",
+      "AS_Path",
+      "MED"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-bgp-advanced-0009",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "某企业 ASBR 与 ISP 建立 eBGP 邻居，两者之间经过一台三层交换机转发（非直连）。管理员要启用 GTSM，关于华为设备上 `valid-ttl-hops` 的取值，正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "必须配置为 1，因为 GTSM 只支持直连邻居"
+      },
+      {
+        "key": "B",
+        "text": "应配置为实际的最大跳数，使接收端接受 TTL 在 [256-hops, 255] 范围内的报文；若按直连配成 1，合法的 TTL=254 报文会被丢弃导致邻居中断"
+      },
+      {
+        "key": "C",
+        "text": "必须配置为 255，两端都配置 255 才能生效"
+      },
+      {
+        "key": "D",
+        "text": "只能对 iBGP 邻居配置，eBGP 邻居不支持 GTSM"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：启用 GTSM 后本端发出的 BGP 报文 TTL 被置为 255，接收端只接受 TTL 不小于（256-hops）的报文，hops 表示两端之间允许的最大跳数。实际经过 2 跳时收到的 TTL 为 254，hops 必须不小于 2，否则合法报文被丢弃、邻居中断。A 把 GTSM 误解为仅直连可用；C 的说法没有依据，255 是上限而非配置值；D 错，GTSM 对 eBGP/iBGP 都可部署，直连 eBGP 是最典型的场景。",
+    "tags": [
+      "BGP",
+      "GTSM",
+      "valid-ttl-hops"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-bgp-advanced-0010",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "multi",
+    "stem": "关于 BGP 路由聚合，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "使用 aggregate 生成聚合路由时，默认聚合路由与明细路由都会向邻居发布，加 detail-suppressed 可只发布聚合路由"
+      },
+      {
+        "key": "B",
+        "text": "加 as-set 参数后，聚合路由的 AS_Path 会携带明细路由的 AS 号集合，保留 AS 间防环信息，代价是属性长度增加"
+      },
+      {
+        "key": "C",
+        "text": "summary automatic 只对通过 import-route 引入的路由按自然网段自动聚合，并抑制明细路由"
+      },
+      {
+        "key": "D",
+        "text": "summary automatic 同样可以聚合通过 network 命令引入的路由"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：`aggregate` 是手工聚合，默认会同时发布聚合路由与明细路由，`detail-suppressed` 用于抑制明细；`as-set` 让聚合路由携带 AS_SET（形如 {65001,65002}）以保留防环信息；`summary automatic` 是自动聚合，只作用于 import-route 引入的路由，按自然网段（A/B/C 类）聚合，并且只发布聚合路由。D 错：network 命令引入的路由不受 summary automatic 影响。",
+    "tags": [
+      "BGP",
+      "路由聚合",
+      "as-set"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-bgp-advanced-0011",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "judge",
+    "stem": "判断：华为设备上执行 `display bgp peer` 时，若某邻居状态显示为 Established，说明该邻居的 BGP 会话已建立，双方可以正常交换 Update 报文。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。BGP 状态机为 Idle → Connect → Active → OpenSent → OpenConfirm → Established，只有到达 Established 后双方才可交互 Update/Keepalive 报文，路由才可能被学习。但要注意“会话正常”不等于“路由优选成功”：路由是否被优选还要看策略过滤、下一跳是否可达、是否为最优路由等因素，因此排查时要同时看 `display bgp routing-table` 与 `display ip routing-table`。",
+    "tags": [
+      "BGP",
+      "邻居状态",
+      "display bgp peer"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-bgp-advanced-0012",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "两台华为路由器可以互相 ping 通直连接口地址，但使用 Loopback 地址建立 iBGP 邻居（两端都配置了 peer <对端Loopback> as-number 与 peer <对端Loopback> connect-interface LoopBack0）时，邻居一直停留在 Active/Idle。最可能的原因是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "未配置 peer <ip> ebgp-max-hop"
+      },
+      {
+        "key": "B",
+        "text": "两端没有到达对端 Loopback 地址的 IGP 路由，导致 TCP 无法用 Loopback 作为源地址建立连接"
+      },
+      {
+        "key": "C",
+        "text": "未配置 MD5 认证"
+      },
+      {
+        "key": "D",
+        "text": "未配置路由反射器"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：使用 Loopback 建立邻居时，TCP 报文的源地址是本端 Loopback，目的地址是对端 Loopback，两个地址都必须在 IGP 中可达，否则握手无法完成，邻居停留在 Active/Idle。直连接口能 ping 通只证明链路与直连网段正常，不代表 Loopback 已发布。A 错，ebgp-max-hop 只用于 eBGP 多跳场景，这里是 iBGP；C 错，两端都未配认证时 MD5 不影响建邻；D 错，路由反射器只影响路由的反射，不影响邻居能否建立。",
+    "tags": [
+      "BGP",
+      "iBGP",
+      "connect-interface",
+      "故障定位"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-bgp-advanced-0013",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "multi",
+    "stem": "关于 BGP 报文类型及其作用，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Open 报文用于协商 BGP 版本、Hold Time、Router ID 以及各项能力（如多协议扩展、路由刷新等）"
+      },
+      {
+        "key": "B",
+        "text": "Keepalive 报文周期性发送以维持邻居关系，其长度固定为 19 字节的 BGP 报文头，不带其他字段"
+      },
+      {
+        "key": "C",
+        "text": "Update 报文可携带路径属性与网络层可达性信息，也可只携带撤销路由用于撤销前缀"
+      },
+      {
+        "key": "D",
+        "text": "Notification 报文用于协商 BGP 能力，只有能力协商失败时才会发送并关闭连接"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Open 负责参数与能力协商，Keepalive 只是一个 19 字节的报文头（无附加字段），Update 既可携带可达路由与属性、也可只携带 Withdrawn Routes 用于撤销，是唯一携带路由信息的报文。D 错：能力协商由 Open 完成；Notification 是在检测到错误（如版本不匹配、Hold 时间不可接受、报文格式错误）时通知对端并关闭连接，收到后邻居通常回到 Idle。",
+    "tags": [
+      "BGP",
+      "报文类型",
+      "Open",
+      "Update"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-bgp-advanced-0014",
+    "exam": "H12-831",
+    "domain": "bgp-advanced",
+    "type": "single",
+    "stem": "在 BGP 中，默认情况下设备对同一目的前缀只向邻居通告一条最优路由。若希望向邻居通告到达同一前缀的多条路由（每条携带不同的路径标识），应使用下列哪项技术？",
+    "options": [
+      {
+        "key": "A",
+        "text": "启用 Add-Path 能力（如 capability-advertise add-path 等配置），使同一前缀可携带多条路由及各自的 Path ID"
+      },
+      {
+        "key": "B",
+        "text": "配置 maximum load-balancing 2"
+      },
+      {
+        "key": "C",
+        "text": "配置 peer <ip> route-limit 2"
+      },
+      {
+        "key": "D",
+        "text": "配置 peer <ip> reflect-client"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：Add-Path（RFC 7911）通过为同一前缀的多条路由分配不同的 Path ID 来区分它们，发送端、接收端与本端选路都需要开启相应能力（如 capability-advertise add-path、bestroute add-path 等）。B 的 maximum load-balancing 只影响本机转发的负载分担，不会改变向邻居通告的路由条数；C 的 route-limit 用于限制从邻居接收的路由数量；D 的 reflect-client 用于把邻居指定为 RR 客户端，与多路径通告无关。",
+    "tags": [
+      "BGP",
+      "Add-Path",
+      "Path ID"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-route-control-0001",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "管理员需要精确匹配“10.1.0.0/16 网段中所有掩码长度为 24 的子网”。关于 ACL 与 IP-Prefix List 的匹配能力，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "ACL 可以匹配掩码长度范围，IP-Prefix List 不能"
+      },
+      {
+        "key": "B",
+        "text": "IP-Prefix List 可同时匹配前缀与掩码长度范围（如 ip ip-prefix p1 permit 10.1.0.0 16 greater-equal 24 less-equal 24），ACL 只能通过通配符匹配地址位，难以精确表达掩码范围"
+      },
+      {
+        "key": "C",
+        "text": "两者完全等价，只是命令写法不同"
+      },
+      {
+        "key": "D",
+        "text": "IP-Prefix List 只能匹配 32 位主机路由"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：IP-Prefix List 的每条规则由“前缀 + 掩码长度范围”组成，greater-equal/less-equal 用于限定掩码长度区间，因此非常适合按“网段 + 掩码长度”做路由过滤。基本/高级 ACL 通过通配符位匹配地址，虽然利用通配符的 0/1 位可以近似表达掩码，但表达不直观、容易出错，也无法像 IP-Prefix List 那样直观地描述长度范围。C、A、D 都与两者的实际能力不符。",
+    "tags": [
+      "路由匹配工具",
+      "IP-Prefix",
+      "ACL"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-route-control-0002",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "在 OSPF 进程下配置 `filter-policy 2000 export`，其作用是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "过滤进入本机 OSPF 路由表的路由，被拒绝的路由不加入路由表"
+      },
+      {
+        "key": "B",
+        "text": "只过滤本机通过 import-route 引入并向外发布的 AS-External 路由，被拒绝的路由不生成 Type-5 LSA，且不影响本机 OSPF 路由表与 LSDB"
+      },
+      {
+        "key": "C",
+        "text": "过滤 OSPF 邻居发来的所有 LSA，被拒绝的 LSA 不进入 LSDB"
+      },
+      {
+        "key": "D",
+        "text": "把本机 OSPF 路由表中被拒绝的路由直接删除"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：OSPF 的 `filter-policy export` 只对 `import-route` 引入的外部路由生效，决定哪些外部路由被生成 Type-5/Type-7 LSA 发布出去，对本区域内/区域间的 LSA 无效，也不影响本机路由表与 LSDB。A 描述的是 `filter-policy import`（只决定是否把 OSPF 算出的路由加入本机路由表，LSDB 仍然完整）；C 错，OSPF 无法用 filter-policy 过滤 LSA，要让 LSA 不进区域需要用 stub/NSSA 或 ABR 上的 LSA 过滤手段；D 说法与 export 语义不符。",
+    "tags": [
+      "路由策略",
+      "filter-policy",
+      "OSPF"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-route-control-0003",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "multi",
+    "stem": "关于华为设备上 Route-Policy 的工作方式，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Route-Policy 由若干 node 组成，node 按编号从小到大依次匹配，某 node 匹配成功即执行其 apply 子句并按该 node 的 permit/deny 决定结果，不再进入后续 node"
+      },
+      {
+        "key": "B",
+        "text": "同一 node 内配置多个 if-match 时，各条件之间是“与”关系，必须全部满足才算匹配该 node"
+      },
+      {
+        "key": "C",
+        "text": "如果一条路由没有匹配任何 node，则默认结果为拒绝"
+      },
+      {
+        "key": "D",
+        "text": "apply 子句只能设置 MED 与 Local_Pref，不能修改 AS_Path 或团体属性"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Route-Policy 是“节点顺序匹配、匹配即结束”的模型，node 编号越小越先匹配；同一 node 内不同 if-match 之间为“与”关系（同一条件的多条规则之间为“或”）；所有 node 都不匹配时隐含拒绝，因此编写时通常要留一个宽松的 permit 节点兜底。D 错：apply 的能力很丰富，可设置/追加 AS_Path（apply as-path）、设置团体属性（apply community）、MED、Local_Pref、Tag、cost、preference 等。",
+    "tags": [
+      "路由策略",
+      "Route-Policy",
+      "if-match",
+      "apply"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-route-control-0004",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "关于策略路由（PBR）与路由策略（Routing Policy）的区别，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "两者都是先过滤路由再查表转发，没有本质区别"
+      },
+      {
+        "key": "B",
+        "text": "PBR 作用于转发平面，按策略为符合条件的报文指定出接口或下一跳，优先级高于正常的路由表查表结果；路由策略作用于控制平面，通过影响路由的发布、接收与属性间接影响转发"
+      },
+      {
+        "key": "C",
+        "text": "PBR 只能匹配目的地址，路由策略只能匹配源地址"
+      },
+      {
+        "key": "D",
+        "text": "路由策略的优先级一定高于 PBR"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：路由策略工作在控制平面，通过 ACL/IP-Prefix/AS_Path Filter/Community Filter 等匹配工具影响路由的产生、发布、接收与属性，从而间接改变路由表；PBR 工作在转发平面，在报文入方向先做策略匹配，命中则按 apply 指定的下一跳/出接口转发，未命中才走正常路由表。PBR 可匹配源/目的地址、协议、端口、VLAN 等，能力比 C 描述的更强；D 说法没有依据，两者作用的层面不同。",
+    "tags": [
+      "策略路由",
+      "PBR",
+      "路由策略"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-route-control-0005",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "multi",
+    "stem": "华为设备上使用 MQC（模块化 QoS 命令行）实现流分类与流量行为时，其组成部分包括哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "流分类（traffic classifier），通过 if-match 定义匹配规则"
+      },
+      {
+        "key": "B",
+        "text": "流行为（traffic behavior），通过 permit/deny/remark/car/redirect 等定义动作"
+      },
+      {
+        "key": "C",
+        "text": "流策略（traffic policy），把流分类与流行为关联，并可通过 classifier ... precedence 指定多个分类之间的匹配优先级"
+      },
+      {
+        "key": "D",
+        "text": "路由策略（route-policy），通过 node 定义 if-match 与 apply 动作"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：MQC 三要素为流分类、流行为、流策略：traffic classifier 定义“匹配什么”，traffic behavior 定义“做什么”（如 remark 重标记、car 限速、redirect 重定向、permit/deny），traffic policy 把两者绑定并通过 `classifier x behavior y` 关联，必要时用 `classifier x precedence n` 指定同一流策略内多个分类的匹配顺序，最后在接口上通过 `traffic-policy` 应用。D 的 route-policy 属于控制平面的路由策略，不是 MQC 的组成部分。",
+    "tags": [
+      "MQC",
+      "流分类",
+      "流行为",
+      "流策略"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-route-control-0006",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "某企业希望把去往 10.10.0.0/16 的流量强制引到指定下一跳 192.168.1.2，同时不影响其他流量的转发，也不希望改动路由表。最合适的做法是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "在 OSPF 中用 route-policy 把该网段的路由 cost 改大"
+      },
+      {
+        "key": "B",
+        "text": "配置基于 ACL 的接口策略路由（PBR），在入方向用 traffic-policy 把匹配流量 redirect 到 192.168.1.2"
+      },
+      {
+        "key": "C",
+        "text": "配置 IP-Prefix List 并为其设置较大的 Local_Pref"
+      },
+      {
+        "key": "D",
+        "text": "修改该网段的掩码长度，以改变最长匹配结果"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：PBR 在不修改路由表的前提下按流指定下一跳或出接口，完全符合“只影响特定流量”的需求。A 属于路由策略，会改变全网去往该网段的选路结果，影响范围不可控；C 中 Local_Pref 是 BGP 属性，只影响 BGP 路由优选，对 OSPF 学到的路由无效，而且同样会改变路由表；D 靠改掩码来“凑”匹配结果在思路上就是错的，也会破坏地址规划。",
+    "tags": [
+      "策略路由",
+      "PBR",
+      "流量工程"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-route-control-0007",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "judge",
+    "stem": "判断：在华为设备的接口入方向应用策略路由（traffic-policy）后，对于匹配策略的报文，设备会按策略指定的下一跳或出接口转发，而不再按路由表转发；未匹配策略的报文仍按正常路由表转发。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。策略路由在转发前先做策略匹配，命中则按 apply 的动作（redirect ip-nexthop / redirect interface 等）转发，优先级高于路由表查表结果；未命中的报文继续走正常的路由表转发。需要注意：重定向指定的下一跳或出接口必须真实可达，否则报文会被丢弃；此外策略路由会增加转发面的匹配开销，配置应尽量简洁。",
+    "tags": [
+      "策略路由",
+      "PBR",
+      "traffic-policy"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-route-control-0008",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "multi",
+    "stem": "管理员编写了如下策略用于把 OSPF 路由引入 BGP：node 10 为 `if-match ip-prefix PF1` 且 `apply med 100`；node 20 为 `if-match ip-prefix PF2` 且 `apply med 200`。其中 PF1 为 `permit 10.1.0.0 16`，PF2 为 `permit 10.1.1.0 24`。现有一条路由 10.1.1.0/24 被引入，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "该路由同时满足 node 10 与 node 20 的条件，因为 10.1.1.0/24 落在 10.1.0.0/16 范围内"
+      },
+      {
+        "key": "B",
+        "text": "由于 node 10 编号更小且匹配成功，最终只应用 node 10 的 apply（med 100），不会再匹配 node 20"
+      },
+      {
+        "key": "C",
+        "text": "若希望 10.1.1.0/24 走 med 200，应把更精确的规则放在编号更小的 node（如 node 5）"
+      },
+      {
+        "key": "D",
+        "text": "Route-Policy 会继续匹配 node 20 并把 med 覆盖为 200"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Route-Policy 是“自上而下、匹配即结束”的模型：node 编号小者优先，一旦某 node 匹配成功就执行其 apply 并返回该 node 的 permit/deny，后面的 node 不再参与。由于 10.1.1.0/24 的前 16 位是 10.1，同时命中 PF1 与 PF2，最终只有 node 10 生效（med=100）。要让更精确的前缀走不同动作，必须让它先被匹配，即放在更小的 node 编号上（或在前面的 node 中显式 deny 掉不需要的）。D 的“继续匹配并覆盖”与 Route-Policy 的匹配模型相反。",
+    "tags": [
+      "路由策略",
+      "Route-Policy",
+      "node 顺序"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-route-control-0009",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "配置 `ip ip-prefix PF index 10 permit 10.1.0.0 16 greater-equal 24 less-equal 24`，该规则匹配的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "所有 10.1.0.0/16 的路由，包括 10.1.0.0/16 本身"
+      },
+      {
+        "key": "B",
+        "text": "掩码长度恰好为 24 且前 16 位为 10.1 的路由，如 10.1.1.0/24、10.1.2.0/24"
+      },
+      {
+        "key": "C",
+        "text": "所有掩码长度不小于 24 的路由，与地址无关"
+      },
+      {
+        "key": "D",
+        "text": "只有 10.1.0.0/24 这一条路由"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：规则中的 10.1.0.0 与 16 定义了“前 16 位必须是 10.1”这一前缀约束，greater-equal 24 与 less-equal 24 把掩码长度锁定为 24，因此匹配 10.1.x.0/24 形式的所有子网。10.1.0.0/16 自身掩码长度为 16，不在 [24,24] 范围内，因此不被匹配（A 错）；C 忽略了地址前缀约束；D 把范围理解成了单条路由。",
+    "tags": [
+      "路由匹配工具",
+      "IP-Prefix",
+      "greater-equal"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-route-control-0010",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "管理员希望只接收携带团体属性 100:1 的 BGP 路由，下列配置思路正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "使用 `ip community-filter basic CF permit 100:1` 定义匹配规则，并配置 `peer <ip> community-filter CF import` 应用"
+      },
+      {
+        "key": "B",
+        "text": "使用 `ip as-path-filter` 匹配字符串 100:1"
+      },
+      {
+        "key": "C",
+        "text": "使用基本 ACL 匹配团体属性 100:1"
+      },
+      {
+        "key": "D",
+        "text": "使用 `peer <ip> ip-prefix` 匹配团体属性"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：团体属性由 Community Filter 匹配：basic 形式直接写 `ASN:NN`，advanced 形式支持正则表达式，然后通过 `peer ... community-filter ... { import | export }` 或 route-policy 中的 `if-match community-filter` 应用。B 的 AS_Path Filter 匹配的是 AS_Path（AS 号序列）；C 的 ACL 与 D 的 IP-Prefix List 匹配的都是 IP 地址前缀，都无法匹配团体属性。",
+    "tags": [
+      "BGP",
+      "团体属性",
+      "community-filter"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-route-control-0011",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "multi",
+    "stem": "下列哪些手段可以影响 BGP 的选路结果，从而实现跨 AS 或 AS 内的流量工程？",
+    "options": [
+      {
+        "key": "A",
+        "text": "通过 route-policy 对特定路由设置较大的 Local_Pref（仅在本 AS 内传递和生效）"
+      },
+      {
+        "key": "B",
+        "text": "对特定路由设置较小的 MED，影响邻居 AS 的入口选路（需要邻居参与比较，且默认只在同一邻居 AS 之间比较）"
+      },
+      {
+        "key": "C",
+        "text": "通过 apply as-path 在 AS_Path 前面追加若干 AS 号，使其在其他 AS 的选路中变差"
+      },
+      {
+        "key": "D",
+        "text": "通过 apply community 设置团体属性，仅凭团体属性本身即可让对端改变选路，无需对端配置任何匹配策略"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Local_Pref 是本 AS 内的“选路权重”，值越大越优，用于控制出方向流量；MED 用于向邻居 AS 提示入口，值越小越优，是“建议值”，需要邻居接受并比较（默认只在来自同一邻居 AS 的路由之间比较，除非配置 compare-different-as-med）；加长 AS_Path 是让路由在别的 AS 看起来“更远”的经典手法（AS_Path 越短越优）。D 错：团体属性本质是一个“标签/标记”，本身不携带选路优先级，必须由对端用 community-filter 匹配后在 route-policy 中执行动作才会生效。",
+    "tags": [
+      "BGP",
+      "流量工程",
+      "Local_Pref",
+      "MED",
+      "AS_Path"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-route-control-0012",
+    "exam": "H12-831",
+    "domain": "route-control",
+    "type": "single",
+    "stem": "管理员对某 BGP 邻居应用了出方向策略 `peer <ip> route-policy RP export`，RP 中只有一个 node 10：permit，且只配置了 `apply community 100:1`，没有任何 if-match。其结果是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "该 node 不匹配任何路由，因此所有路由都因默认拒绝而被过滤"
+      },
+      {
+        "key": "B",
+        "text": "该 node 匹配所有路由（未配置 if-match 视为全部匹配），所有路由都被放行并被添加团体属性 100:1"
+      },
+      {
+        "key": "C",
+        "text": "只有原本就携带团体属性的路由才会被放行"
+      },
+      {
+        "key": "D",
+        "text": "配置会报错，permit 节点必须至少配置一个 if-match"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：Route-Policy 的 node 若未配置任何 if-match，则进入该 node 的路由一律匹配成功，因此会执行 apply 并放行，等价于“匹配所有”。A 错：默认拒绝只发生在所有 node 都不匹配时；C 混淆了“设置团体属性”与“匹配团体属性”；D 错，华为设备允许 permit 节点不配置 if-match，此时该节点对全部路由生效——这也正是不加 if-match 的 permit 节点常被用作兜底节点的原因。",
+    "tags": [
+      "路由策略",
+      "Route-Policy",
+      "apply community"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-switching-0001",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "single",
+    "stem": "某园区网络使用 MSTP，要求 VLAN 10 的流量以 SW1 为根桥、VLAN 20 的流量以 SW2 为根桥，实现按 VLAN 的负载分担。正确做法是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "只配置一个 MSTI，通过调整各交换机的桥优先级实现"
+      },
+      {
+        "key": "B",
+        "text": "创建两个 MSTI（如 MSTI 1 映射 VLAN 10、MSTI 2 映射 VLAN 20），分别指定 SW1 为 MSTI 1 的根桥、SW2 为 MSTI 2 的根桥"
+      },
+      {
+        "key": "C",
+        "text": "在 SW1 上关闭 VLAN 20 的所有端口，让流量绕行到 SW2"
+      },
+      {
+        "key": "D",
+        "text": "改用 RSTP，因为 RSTP 天然支持基于 VLAN 的负载分担"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：MSTP 通过 MSTI（多生成树实例）把不同 VLAN 映射到不同实例，每个实例独立计算生成树，因此可以在不同实例上使用不同的根桥，实现按 VLAN 的负载分担。关键约束是同一 MST 域内所有设备的域名、修订级别、VLAN 与实例的映射必须完全一致。A 只有一棵树，无法分担；C 是靠断链路实现的“伪分担”，会破坏冗余；D 错，RSTP 是单生成树协议，所有 VLAN 共享一棵树，无法按 VLAN 分流。",
+    "tags": [
+      "MSTP",
+      "MSTI",
+      "负载分担"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-switching-0002",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "multi",
+    "stem": "两台交换机要划分到同一个 MST 域（MST Region）中，必须满足哪些条件？",
+    "options": [
+      {
+        "key": "A",
+        "text": "配置相同的域名（region-name）"
+      },
+      {
+        "key": "B",
+        "text": "配置相同的修订级别（revision-level）"
+      },
+      {
+        "key": "C",
+        "text": "配置相同的 VLAN 到实例的映射关系（instance ... vlan ...）"
+      },
+      {
+        "key": "D",
+        "text": "两台设备的桥 MAC 地址必须相同"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：MST 域的三个判定要素是域名、修订级别、VLAN 与实例的映射关系，三者必须完全一致，任何一项不同都会被视为不同的域，MSTP 将退化为按域间方式（相当于多个域共用一棵 CIST）运行，导致预期的负载分担失效。D 错：桥 MAC 由硬件决定，不可能也不要求相同；域内通过比较桥 ID（优先级 + MAC）选举总根桥。",
+    "tags": [
+      "MSTP",
+      "MST Region",
+      "region-name"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-switching-0003",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "single",
+    "stem": "关于 Super VLAN（VLAN 聚合），下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Super VLAN 本身不能配置 IP 地址，只有 Sub VLAN 才能配置 IP 地址"
+      },
+      {
+        "key": "B",
+        "text": "Super VLAN 是三层概念的 VLAN，在其 VLANIF 上配置 IP 地址作为各 Sub VLAN 的网关；Sub VLAN 只用于隔离广播域，不能配置 IP 地址"
+      },
+      {
+        "key": "C",
+        "text": "Super VLAN 中的各主机之间完全不能通信"
+      },
+      {
+        "key": "D",
+        "text": "Sub VLAN 内主机之间不能互通，必须绕经 Super VLAN 的三层接口"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：VLAN 聚合的目的是节约 IP 地址并隔离广播域：多个 Sub VLAN 各自是独立的二层广播域，但共用一个网段和同一个网关——即 Super VLAN 的 VLANIF 接口地址。因此 Super VLAN 是三层概念（配 IP），Sub VLAN 是二层概念（不能配 VLANIF）。同一 Sub VLAN 内主机二层直接互通，跨 Sub VLAN 的通信必须经网关转发，所以还要在 Super VLAN 上配置子网间代理 ARP，否则主机不会为跨子网的目的地址做 ARP 应答。A、C、D 均与此不符。",
+    "tags": [
+      "Super VLAN",
+      "VLAN 聚合",
+      "代理 ARP"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-switching-0004",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "multi",
+    "stem": "关于 DHCP Snooping 的功能与实现，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "通过监听 DHCP 报文建立 IP-MAC-VLAN-端口 的绑定表，供 IPSG、DAI 等安全特性使用"
+      },
+      {
+        "key": "B",
+        "text": "连接合法 DHCP 服务器的端口需配置为信任端口，连接终端的端口为不信任端口；不信任端口会丢弃来自 DHCP 服务器的 Offer/ACK 等应答报文"
+      },
+      {
+        "key": "C",
+        "text": "不信任端口收到终端发送的 DHCP Request 报文时会直接丢弃，以阻止终端申请地址"
+      },
+      {
+        "key": "D",
+        "text": "可用于防止私接 DHCP 服务器造成地址分配混乱"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explain": "解析：DHCP Snooping 的核心是“监听并记录 + 端口信任模型”：它从 DHCP 交互中提取 IP、MAC、VLAN、接入端口生成绑定表，供 IPSG（源 IP/MAC 校验）等特性使用；不信任端口上来自服务器的应答（Offer/ACK/NAK）被丢弃，从而阻断私接的 DHCP 服务器。C 错：终端发出的 Discover/Request 是正常申请地址的报文，必须被转发；被丢弃的是来自服务器的应答报文，以及不信任端口上的非法 DHCP 报文。",
+    "tags": [
+      "DHCP Snooping",
+      "绑定表",
+      "信任端口"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-switching-0005",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "single",
+    "stem": "某接入交换机同时部署了 DHCP Snooping 与 IPSG（IP Source Guard）。对于通过 DHCP 获取地址的终端，IPSG 检查报文的依据是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "依据静态配置的 ACL 规则，与 DHCP Snooping 无关"
+      },
+      {
+        "key": "B",
+        "text": "依据 DHCP Snooping 生成的绑定表（IP-MAC-VLAN-端口），对与绑定关系不一致的报文予以丢弃"
+      },
+      {
+        "key": "C",
+        "text": "依据 ARP 表项检查源 MAC 地址"
+      },
+      {
+        "key": "D",
+        "text": "依据路由表检查源 IP 是否可达"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：IPSG 通过绑定表对接口收到的 IP 报文做源 IP + 源 MAC 检查，绑定表可以由 DHCP Snooping 动态生成，也可以用 `user-bind static` 手工配置（用于静态地址主机），因此 IPSG 必须与 DHCP Snooping 或静态绑定配合部署。C 描述的是 DAI 的思路（校验 ARP 报文）；D 与源地址防欺骗无关；A 错，IPSG 的判据是绑定表而不是 ACL。",
+    "tags": [
+      "IPSG",
+      "DHCP Snooping",
+      "接入安全"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-switching-0006",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "single",
+    "stem": "在华为交换机某接入口下配置了 `port-security enable`、`port-security max-mac-num 2`、`port-security protect-action restrict`。当该接口学习到的 MAC 数量超过 2 个时，设备的行为是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "直接关闭接口，接口进入 error-down 状态"
+      },
+      {
+        "key": "B",
+        "text": "丢弃源 MAC 不在安全表项中的报文，并上报告警"
+      },
+      {
+        "key": "C",
+        "text": "覆盖最早学习的 MAC 表项，继续正常转发"
+      },
+      {
+        "key": "D",
+        "text": "丢弃报文，但不产生任何告警"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：华为端口安全有三种保护动作：`protect` 只丢弃报文不上报告警；`restrict` 丢弃报文并上报告警；`shutdown` 使接口进入 error-down 并上报告警。题目配置的是 restrict，因此选 B。A 对应 shutdown；D 对应 protect；C 是未启用端口安全时的正常 MAC 学习行为（MAC 表满后按老化/覆盖处理）。注意 `port-security max-mac-num` 的默认值为 1。",
+    "tags": [
+      "端口安全",
+      "port-security",
+      "接入安全"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-switching-0007",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "multi",
+    "stem": "关于 QinQ（VLAN 双层标签）的描述，下列正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "基本 QinQ 把接口配置为 dot1q-tunnel 类型并指定 port default vlan，为进入该接口的报文统一打上外层 VLAN 标签（公网 VLAN）"
+      },
+      {
+        "key": "B",
+        "text": "灵活 QinQ（selective QinQ）可以基于报文已有的内层 VLAN 标签或其他匹配条件，为不同流打上不同的外层标签"
+      },
+      {
+        "key": "C",
+        "text": "QinQ 报文最外层标签是公网 VLAN Tag，用于在运营商网络中转发；内层 Tag 对运营商设备透明，可保留用户的 VLAN 规划"
+      },
+      {
+        "key": "D",
+        "text": "QinQ 报文比普通以太帧短，因此必须把接口 MTU 调小才能正常转发"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：基本 QinQ 用 `port link-type dot1q-tunnel` + `port default vlan` 给所有入向报文加同一外层 Tag；灵活 QinQ 通过流分类为不同内层 Tag 打不同外层 Tag，便于按用户/业务区分。QinQ 的最大价值在于用外层 Tag 在公网标识用户，内层 Tag 由用户自行规划，运营商设备只需看外层 Tag 转发，从而突破 4094 个 VLAN 的限制。D 错：QinQ 帧比普通帧多 4 字节，对 MTU 的需求更大而非更小，运营商侧接口通常需要把 MTU 调大。",
+    "tags": [
+      "QinQ",
+      "dot1q-tunnel",
+      "VLAN"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-switching-0008",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "single",
+    "stem": "某二层网络中，终端反复插拔导致生成树频繁发生拓扑变化，全网 MAC 表项被反复刷新。下列优化措施中最有效的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "把连接终端的端口配置为边缘端口（stp edged-port），并配合 BPDU 保护，使终端上下线不触发生成树拓扑变化"
+      },
+      {
+        "key": "B",
+        "text": "把所有端口都配置为边缘端口，以获得最快的收敛速度"
+      },
+      {
+        "key": "C",
+        "text": "直接关闭生成树协议，彻底消除拓扑变化"
+      },
+      {
+        "key": "D",
+        "text": "把 Hello 时间增大到 30 秒，减少 BPDU 的发送频率"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：边缘端口 up 后立即进入转发状态且不产生拓扑变化通知（TC），因此终端插拔不会引起全网 MAC 刷新；配合 `stp bpdu-protection`，一旦边缘端口收到 BPDU 就关闭该端口，防止有人私接交换机形成环路。B 错：连接交换机或集线器的端口绝不能配置为边缘端口，否则会造成临时环路与广播风暴；C 会失去环路保护，风险极高；D 会拖慢故障检测与收敛，且不能消除终端插拔引起的 TC。",
+    "tags": [
+      "MSTP",
+      "边缘端口",
+      "TC 保护"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-switching-0009",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "single",
+    "stem": "为防止下游交换机因优先级被误改（变得更优）而抢走根桥位置，应在根桥的指定端口上配置？",
+    "options": [
+      {
+        "key": "A",
+        "text": "stp root-protection"
+      },
+      {
+        "key": "B",
+        "text": "stp loop-protection"
+      },
+      {
+        "key": "C",
+        "text": "stp edged-port"
+      },
+      {
+        "key": "D",
+        "text": "stp tc-protection"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：根保护配置在根桥的指定端口上，一旦该端口收到优先级更高的（更优的）BPDU，就立即进入 discarding 状态，从而拒绝被下游设备抢占根桥。环路保护（loop protection）配置在根端口/备份端口上，用于链路单向故障收不到 BPDU 时避免端口因超时误进入转发而引发环路；TC 保护用于抑制拓扑变化引发的 MAC 刷新频率；edged-port 用于连接终端的接入端口。",
+    "tags": [
+      "MSTP",
+      "根保护",
+      "loop-protection"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-switching-0010",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "multi",
+    "stem": "某酒店接入网络要求：同一楼层各房间的终端之间二层不能互相访问，但每个终端都能正常访问网关。下列可以实现该需求的技术有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "端口隔离（port-isolate enable），把端口加入同一隔离组，隔离组内端口二层不互通，但与上行口可互通"
+      },
+      {
+        "key": "B",
+        "text": "为每个房间划分独立 VLAN，各 VLAN 通过三层网关互通"
+      },
+      {
+        "key": "C",
+        "text": "使用 MUX VLAN：Principal VLAN 可与所有从 VLAN 通信，Group VLAN 之间不能互通，Separate VLAN 与任何 VLAN 都不通"
+      },
+      {
+        "key": "D",
+        "text": "配置端口安全 port-security max-mac-num 1，限制每个端口只能学习一个 MAC 地址"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：端口隔离在同一 VLAN 内实现二层隔离且保留上行互通，是最轻量的方案；按房间划分 VLAN 属于用二层域隔离，再由三层网关互通的经典做法；MUX VLAN 则用一张 VLAN 内的角色划分实现“都能访问网关、互相不能访问”的需求。D 错：端口安全限制的是端口可学习的 MAC 数量，属于接入层防 MAC 泛洪/防私接的手段，同一 VLAN 内的主机仍然可以二层互访，达不到隔离效果。",
+    "tags": [
+      "端口隔离",
+      "MUX VLAN",
+      "VLAN 隔离"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-switching-0011",
+    "exam": "H12-831",
+    "domain": "switching",
+    "type": "judge",
+    "stem": "判断：Super VLAN（VLAN 聚合）中，所有 Sub VLAN 共用 Super VLAN 的 VLANIF 接口地址作为网关，因此不同 Sub VLAN 中的主机可以处于同一 IP 网段。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。VLAN 聚合的核心价值就是“一个网段 + 多个二层广播域”：各 Sub VLAN 内主机使用同一网段、同一网关（Super VLAN 的 VLANIF 地址），从而大幅节约 IP 地址。代价是跨 Sub VLAN 的通信必须经网关三层转发，因此通常需要在 Super VLAN 的 VLANIF 上启用子网间代理 ARP（`arp-proxy inter-sub-vlan-proxy enable`），否则主机不会为同网段的跨 Sub VLAN 目的地址做 ARP 应答。",
+    "tags": [
+      "Super VLAN",
+      "VLAN 聚合",
+      "网关"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-vxlan-dc-0001",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "在华为数据中心 VXLAN 方案中，VNI（VXLAN Network Identifier）的长度与取值范围是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "12 位，1~4094"
+      },
+      {
+        "key": "B",
+        "text": "24 位，1~16777215"
+      },
+      {
+        "key": "C",
+        "text": "16 位，1~65535"
+      },
+      {
+        "key": "D",
+        "text": "32 位，1~4294967295"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：VNI 在 VXLAN 头部占 24 位，取值范围为 1~16777215，这是 VXLAN 能够突破传统 VLAN 4094 个二层域限制的根本原因。VLAN ID 只有 12 位（1~4094），A 是 VLAN 的取值范围。在华为设备上，业务 VLAN 通常先映射到广播域（bridge-domain），再由 bridge-domain 与 VNI 关联（如 `bridge-domain 10` 下配置 `vxlan vni 10010`），从而实现二层业务与 VXLAN 隧道的对应。",
+    "tags": [
+      "VXLAN",
+      "VNI",
+      "VLAN"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-vxlan-dc-0002",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "VXLAN 中 VTEP（VXLAN Tunnel End Point）的主要作用是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "为进入 VXLAN 的报文封装 VXLAN 头，为出来的报文解封装，其 IP 地址（通常是 Loopback 地址）作为隧道端点地址"
+      },
+      {
+        "key": "B",
+        "text": "只负责外层 IP 报文的路由转发，不参与 VXLAN 封装与解封装"
+      },
+      {
+        "key": "C",
+        "text": "负责把 VNI 翻译成 VLAN ID 并写入报文中"
+      },
+      {
+        "key": "D",
+        "text": "负责为虚拟机分配 IP 地址与网关"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：VTEP 是 VXLAN 隧道的端点，负责封装与解封装：入方向给原始以太帧加上 VXLAN 头（含 VNI）、UDP 头和外层 IP 头，出方向剥离这些头部还原原始帧。VTEP 的源地址与目的地址共同标识一条 NVE 隧道，地址必须在 Underlay 中三层可达，通常使用 Loopback 接口地址并通过 IGP/BGP 发布以获得冗余。B 混淆了 VTEP 与 Underlay 转发设备；C 错，VNI 与 VLAN 的映射由设备内部的 bridge-domain 完成，不需要写进报文；D 是 DHCP 服务的职责。",
+    "tags": [
+      "VXLAN",
+      "VTEP",
+      "NVE"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-vxlan-dc-0003",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "multi",
+    "stem": "在采用 BGP EVPN 作为 VXLAN 控制平面的方案中，下列哪些是常见的 EVPN 路由类型及其用途？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Type 2（MAC/IP Advertisement Route）用于通告主机 MAC 与 IP 的对应关系，可携带 ARP 信息以实现 ARP 抑制"
+      },
+      {
+        "key": "B",
+        "text": "Type 3（Inclusive Multicast Ethernet Tag Route）用于 VTEP 之间自动发现，形成 BUM 流量的头端复制列表"
+      },
+      {
+        "key": "C",
+        "text": "Type 5（IP Prefix Route）用于通告外部 IP 前缀路由，实现 VXLAN 网络与外部网络（如数据中心出口）的互通"
+      },
+      {
+        "key": "D",
+        "text": "Type 1（Ethernet Auto-Discovery Route）用于在各 VTEP 之间通告主机 MAC 地址"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Type 2 是 EVPN 中最核心的路由，NLRI 中同时携带 MAC 与 IP，可支撑主机路由、ARP 抑制与主机迁移；Type 3 用于同一 BD 内的 VTEP 自动发现，据此建立入方向复制（ingress replication）列表；Type 5 用于引入外部 IP 前缀。D 错：Type 1 是 Ethernet A-D 路由，用于多归接入场景下的水平分割与冗余，并不承担 MAC 通告职责，MAC 通告由 Type 2 完成。",
+    "tags": [
+      "VXLAN",
+      "BGP EVPN",
+      "路由类型"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-vxlan-dc-0004",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "华为数据中心方案中的“分布式 VXLAN 网关”（分布式网关）相比“集中式网关”的主要优势是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "所有跨子网流量都集中到一台网关设备处理，管理更简单"
+      },
+      {
+        "key": "B",
+        "text": "每台 Leaf 都是其下挂网段的网关，跨子网流量在本地 Leaf 即完成三层转发并直接进入 VXLAN 隧道，避免流量绕行集中网关，转发路径更优、扩展性更好"
+      },
+      {
+        "key": "C",
+        "text": "不需要配置 VNI 与 bridge-domain"
+      },
+      {
+        "key": "D",
+        "text": "可以减少 VTEP 的数量，降低隧道建立开销"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：集中式网关要求所有跨子网流量都送到同一台（或一对）网关设备，容易形成性能瓶颈，并在 Spine-Leaf 拓扑中产生次优路径；分布式网关把网关功能下沉到每台 Leaf，主机流量在本地 Leaf 完成三层转发后直接进入隧道，路径最优。分布式网关通常配合 EVPN Type 2 路由在各 Leaf 之间同步主机 MAC/IP 信息。C 错，VNI、BD、VBDIF 等配置依然必需；D 错，每台 Leaf 仍是 VTEP，隧道数量不会因此减少。",
+    "tags": [
+      "VXLAN",
+      "分布式网关",
+      "VBDIF"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-vxlan-dc-0005",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "multi",
+    "stem": "关于数据中心 VXLAN 网络中 Underlay 与 Overlay 的关系，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Underlay 提供 VTEP 之间的三层可达性，通常由 IGP（OSPF/IS-IS）或 eBGP 承载，并配合 ECMP 实现多路径负载分担"
+      },
+      {
+        "key": "B",
+        "text": "Overlay 是建立在 Underlay 之上的逻辑网络，VXLAN 封装后的报文作为 Underlay 的载荷被转发，Overlay 的拓扑对 Underlay 设备透明"
+      },
+      {
+        "key": "C",
+        "text": "VTEP 的源地址必须在 Underlay 中可达，通常使用 Loopback 地址以提供冗余"
+      },
+      {
+        "key": "D",
+        "text": "Underlay 设备必须运行 VXLAN 协议，否则 Overlay 无法建立"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Underlay 只负责把封装后的报文送到对端 VTEP，因此核心要求是 IP 可达与多路径；Spine 等中间设备完全不需要感知 VXLAN，只按外层 IP 头转发，这正是“Overlay 对 Underlay 透明”的含义。VTEP 地址通常用 Loopback 承载，并通过 IGP/BGP 发布，从而在单条物理链路故障时仍保持隧道可用。D 错：Underlay 上运行 VXLAN 既不必要也不正确，VXLAN 的封装与解封装只发生在 VTEP 上。",
+    "tags": [
+      "VXLAN",
+      "Underlay",
+      "Overlay",
+      "VTEP"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-vxlan-dc-0006",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "在采用 BGP EVPN 控制平面的 VXLAN 网络中，某 VTEP 收到本地的 BUM（广播、未知单播、组播）流量时如何转发？",
+    "options": [
+      {
+        "key": "A",
+        "text": "向所有 VTEP 泛洪，包括不属于该广播域的 VTEP"
+      },
+      {
+        "key": "B",
+        "text": "根据 EVPN Type 3 路由形成的入方向复制列表，把报文复制后单播封装发往所有属于该广播域的远端 VTEP"
+      },
+      {
+        "key": "C",
+        "text": "必须依赖 Underlay 部署 PIM-SM 组播路由来转发，EVPN 不参与"
+      },
+      {
+        "key": "D",
+        "text": "直接丢弃，等待 ARP 表项学习完成后才开始转发"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：使用 EVPN 后，VTEP 通过 Type 3（Inclusive Multicast Ethernet Tag）路由互相发现同一 BD 的成员，并据此建立头端复制列表，对 BUM 流量做入方向复制（ingress replication）后以单播隧道发送。这样 Underlay 无需部署组播，也避免了向无关 VTEP 泛洪。C 描述的是 VXLAN 依赖组播转发 BUM 的另一种实现方式（需要 Underlay 支持组播），不是 EVPN 方案的做法；A 会浪费带宽并可能泄露到其他广播域；D 会导致 BUM 流量（如首个 ARP 请求）无法送达。",
+    "tags": [
+      "VXLAN",
+      "BUM",
+      "EVPN",
+      "头端复制"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-vxlan-dc-0007",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "VXLAN 报文的封装层次，由外到内依次是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "外层以太头 → 外层 IP 头 → UDP 头 → VXLAN 头 → 原始以太帧"
+      },
+      {
+        "key": "B",
+        "text": "外层以太头 → VXLAN 头 → UDP 头 → 外层 IP 头 → 原始以太帧"
+      },
+      {
+        "key": "C",
+        "text": "UDP 头 → 外层 IP 头 → VXLAN 头 → 原始以太帧"
+      },
+      {
+        "key": "D",
+        "text": "外层 IP 头 → 外层以太头 → VXLAN 头 → UDP 头 → 原始以太帧"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：VXLAN 报文结构为“外层以太头 | 外层 IP 头 | UDP 头 | VXLAN 头（8 字节，含 24 位 VNI）| 原始以太帧”，即 VXLAN 使用 UDP 承载，目的端口默认为 4789。B、D 把内层顺序搞错（UDP 必须在 VXLAN 之外，因为 VXLAN 是被 UDP 封装而不是反过来）；C 缺少外层以太头，在实际链路上不存在只有 IP 头的帧。",
+    "tags": [
+      "VXLAN",
+      "封装格式",
+      "UDP 4789"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-vxlan-dc-0008",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "multi",
+    "stem": "在某数据中心分布式网关方案中，各 Leaf 之间通过 BGP EVPN 同步 Type 2 路由。关于该方案带来的能力，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Leaf 可由 Type 2 路由中携带的 MAC 与 IP 信息生成主机表项（ARP/主机路由），实现跨 Leaf 的三层转发而无需泛洪 ARP 请求"
+      },
+      {
+        "key": "B",
+        "text": "可配合 ARP 广播抑制，由 Leaf 依据 EVPN 学到的表项直接代答 ARP 请求，减少 BUM 流量"
+      },
+      {
+        "key": "C",
+        "text": "主机迁移时，新的 Type 2 路由会通告新的 VTEP 地址，各 Leaf 随之更新转发表项，实现主机的快速迁移"
+      },
+      {
+        "key": "D",
+        "text": "EVPN Type 2 路由只能携带 MAC 地址，不能携带 IP 地址"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：Type 2（MAC/IP Advertisement Route）的 NLRI 中同时包含 MAC 长度/MAC 地址与 IP 长度/IP 地址字段，正因如此才能携带主机的 IP 信息，用于生成主机路由、实现 ARP 抑制（本地有表项时直接代答，不泛洪）以及主机迁移时快速更新转发表。D 与该 NLRI 结构相反，如果 Type 2 只能携带 MAC，则 ARP 抑制与主机路由都无法实现。",
+    "tags": [
+      "VXLAN",
+      "EVPN",
+      "Type 2",
+      "ARP 抑制"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-vxlan-dc-0009",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "关于 VXLAN 中“二层网关”与“三层网关”的区别，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "二层网关用于同一子网（同 BD/VNI）内主机互通，实现 VLAN 与 VXLAN 之间的二层桥接；三层网关（VBDIF）用于不同子网之间的三层互通"
+      },
+      {
+        "key": "B",
+        "text": "二层网关用于不同子网互通，三层网关用于同子网互通"
+      },
+      {
+        "key": "C",
+        "text": "二层网关必须部署在 Spine 上，三层网关必须部署在 Leaf 上"
+      },
+      {
+        "key": "D",
+        "text": "两者没有区别，只是命名不同"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：二层网关解决的是“同一广播域内的本地 VLAN 与远端 VXLAN 之间如何桥接”，让同一子网的主机跨 Leaf 二层互通；三层网关则是 VBDIF 接口，为不同子网提供网关与三层转发能力（分布式网关方案中部署在每台 Leaf 上）。B 把两者说反了；C 错，网关是逻辑角色，部署位置由方案决定（集中式通常部署在 Spine/独立网关设备，分布式部署在 Leaf）；D 错，两者作用的协议层次不同。",
+    "tags": [
+      "VXLAN",
+      "二层网关",
+      "三层网关",
+      "VBDIF"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-vxlan-dc-0010",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "single",
+    "stem": "某数据中心中，主机 A（10.1.1.10/24，接入 Leaf1 的 VNI 10010）要与主机 B（10.1.1.20/24，接入 Leaf3 的 VNI 10010）通信，两台 Leaf 均部署了分布式网关。该数据报文的转发过程是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Leaf1 依据本地 ARP/EVPN 表项得到主机 B 的 MAC，直接做 VXLAN 封装（VNI 10010）后经 Underlay 发往 Leaf3 的 VTEP，Leaf3 解封装后二层转发给主机 B，不经过三层网关"
+      },
+      {
+        "key": "B",
+        "text": "Leaf1 必须把报文送到 Spine 上的集中网关，再由网关转发到 Leaf3"
+      },
+      {
+        "key": "C",
+        "text": "Leaf1 必须先经本机 VBDIF 做一次三层转发，再经 Leaf3 的 VBDIF 转发给主机 B"
+      },
+      {
+        "key": "D",
+        "text": "两台 Leaf 之间必须建立二层 Trunk 链路才能通信"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：主机 A 与主机 B 处于同一子网（同 VNI/BD），属于二层转发：Leaf1 通过本地 ARP 表或 EVPN Type 2 学到的表项获得主机 B 的 MAC，直接将原始帧封装为 VXLAN 报文（VNI 10010）并从 Underlay 送到 Leaf3 的 VTEP，Leaf3 解封装后按 MAC 转发给主机 B，全程不经过任何三层网关。只有跨子网通信才需要 VBDIF 做三层转发。B 描述的是集中式网关的次优路径；C 让同子网流量多绕一次三层转发，不必要；D 与 VXLAN “基于三层 Underlay 承载二层业务”的设计初衷相反。",
+    "tags": [
+      "VXLAN",
+      "同子网转发",
+      "EVPN"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-vxlan-dc-0011",
+    "exam": "H12-831",
+    "domain": "vxlan-dc",
+    "type": "judge",
+    "stem": "判断：VXLAN 使用 UDP 作为传输层协议，IANA 分配的目的端口号为 4789，华为设备上 VXLAN 的默认目的端口号也是 4789。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。RFC 7348 规定 VXLAN 使用 UDP 目的端口 4789（早期草案曾使用 8472，部分厂商为兼容保留）。华为设备默认使用 4789，并支持通过命令修改该目的端口；需要注意的是修改后两端 VTEP 必须保持一致，否则对端无法正确识别并解封装 VXLAN 报文。",
+    "tags": [
+      "VXLAN",
+      "UDP 4789",
+      "VTEP"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-reliability-0001",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "single",
+    "stem": "某 VRRP 备份组中两台路由器均使用默认优先级，当前 R1 为 Master。若希望 R2 在正常情况下成为 Master，下列配置最直接有效的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "在 R2 上执行 vrrp vrid 1 priority 120，把 R2 的优先级提高到大于 R1"
+      },
+      {
+        "key": "B",
+        "text": "在 R2 上执行 vrrp vrid 1 preempt-mode disable，关闭抢占"
+      },
+      {
+        "key": "C",
+        "text": "在 R1 上执行 vrrp vrid 1 priority 255，把 R1 的优先级设为最高"
+      },
+      {
+        "key": "D",
+        "text": "在 R1 上执行 vrrp vrid 1 timer advertise 1，缩短通告间隔"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：VRRP 默认优先级为 100，取值越大越优先，把 R2 提高到 120 后，由于默认开启抢占模式，R2 会在一段时间后抢占为 Master。B 关闭抢占后，即使 R2 优先级更高也不会抢占，方向相反；C 把 R1 提到 255（IP 地址拥有者的保留优先级）只会让 R1 更稳固地保持 Master；D 只改变通告周期，影响故障检测速度，不改变选举结果。",
+    "tags": [
+      "VRRP",
+      "优先级",
+      "抢占"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-reliability-0002",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "multi",
+    "stem": "某 VRRP 备份组中 R1 为 Master（优先级 120），R2 为 Backup（优先级 100）。管理员希望 R1 的上行链路出现故障时能主动降级、让 R2 接管。下列做法可行的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "在 R1 上配置 vrrp vrid 1 track interface GigabitEthernet0/0/2 reduced 30，上行接口 down 时优先级降低 30"
+      },
+      {
+        "key": "B",
+        "text": "在 R1 上配置 vrrp vrid 1 track ip route 10.1.1.0 24 reduced 40，跟踪某条路由是否可达"
+      },
+      {
+        "key": "C",
+        "text": "在 R1 上配置 vrrp vrid 1 preempt-mode timer delay 20，使故障恢复后延迟抢占"
+      },
+      {
+        "key": "D",
+        "text": "在 R2 上把 vrrp vrid 1 priority 改为 255，使 R2 始终优先"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explain": "解析：VRRP 通过 track 关联被监视对象（接口、路由，以及 NQA/BFD 等），对象故障时按 reduced 值降低本端优先级，使 Backup 因优先级更高而抢占成为 Master，这正是“上行故障时切换”的标准做法。C 的抢占延迟用于防止链路/设备抖动导致主备反复切换，不能让 Master 因上行故障而主动降级；D 会让 R2 一直抢占成为 Master，无法实现“仅在 R1 上行故障时才切换”，而且优先级 255 在 VRRP 中是为 IP 地址拥有者保留的特殊值。",
+    "tags": [
+      "VRRP",
+      "track",
+      "优先级降级"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-reliability-0003",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "single",
+    "stem": "某 VRRP 备份组每隔几分钟就发生一次主备切换，日志中反复出现 Master 状态变化。下列原因与处理措施最匹配的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "虚拟 IP 与接口实 IP 冲突，应更换虚拟 IP"
+      },
+      {
+        "key": "B",
+        "text": "上行链路或路由存在周期性抖动，触发 track 联动的优先级反复升降；应排查链路抖动并配置抢占延迟 preempt-mode timer delay 抑制频繁切换"
+      },
+      {
+        "key": "C",
+        "text": "VRRP 认证口令不一致，导致 Master 反复切换"
+      },
+      {
+        "key": "D",
+        "text": "两台设备的备份组 VRID 配成了不同值，导致两组互相干扰"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：周期性切换的典型原因是链路/路由抖动使被 track 对象反复故障与恢复，从而引起优先级的升降与抢占；配置抢占延迟可让设备在指定时间内保持观望，抑制这类抖动。A 会造成地址冲突与通信异常，通常表现为业务不通而不是周期性切换；C 认证不一致会导致报文校验失败，表现为无法形成稳定的主备关系，而不是周期性切换；D 中 VRID 不同意味着两台设备属于两个互不相关的备份组，各自独立选举，不会互相干扰。",
+    "tags": [
+      "VRRP",
+      "抢占延迟",
+      "主备切换"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-reliability-0004",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "multi",
+    "stem": "关于 BFD 会话的建立与运行，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "BFD 会话有静态与动态两种建立方式：静态方式需手工指定本地与远端标识符，动态方式由上层应用触发并自动协商"
+      },
+      {
+        "key": "B",
+        "text": "BFD 控制报文封装在 UDP 中，单跳会话使用目的端口 3784，多跳会话使用目的端口 4784"
+      },
+      {
+        "key": "C",
+        "text": "BFD 通过控制报文中 Sta 字段的状态迁移完成会话建立，之后周期性发送控制报文进行检测"
+      },
+      {
+        "key": "D",
+        "text": "BFD 会话建立后，检测时间完全由本端单方面决定，与对端配置无关"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：BFD 的会话建立确实分为静态（手工配置本地/远端 Discriminator）与动态（由路由协议等上层应用触发协商）两种；其控制报文封装在 UDP 中，单跳用 3784、多跳用 4784；会话建立过程通过 Sta 字段在 Down/Init/Up 之间迁移完成。D 错：BFD 的检测时间由两端协商决定——实际发送间隔取两端 Desired Min TX Interval 中较大者，检测时间 = 协商后的接收间隔 × Detect Mult，因此与对端的配置直接相关。",
+    "tags": [
+      "BFD",
+      "会话建立",
+      "UDP 3784"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-reliability-0005",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "single",
+    "stem": "在华为设备上，OSPF 进程下配置了 `bfd all-interfaces enable`。相比仅依赖 Hello/Dead 定时器，BFD 在此场景中的作用是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "BFD 会替代 OSPF 的 Hello 报文，用于 OSPF 邻居的建立与保活"
+      },
+      {
+        "key": "B",
+        "text": "BFD 以远小于 Dead 定时器的间隔双向发送控制报文，能在毫秒级感知链路故障，并立即通知 OSPF 拆除邻居关系、触发路由重新计算，从而加快收敛"
+      },
+      {
+        "key": "C",
+        "text": "BFD 只能用于两台设备直连且中间不经过任何设备的场景，否则无法检测"
+      },
+      {
+        "key": "D",
+        "text": "BFD 检测到故障后只能上报告警，不能影响路由协议的运行"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：BFD 是独立的通用故障检测机制，与路由协议通过联动配合：由协议触发建立会话，会话 Down 时立即通知协议处理。OSPF 的 Dead 定时器默认 40 秒，而 BFD 可配置为毫秒级间隔，因此能显著加快收敛。A 错：BFD 不参与邻居建立，Hello 仍然是 OSPF 建立邻居的唯一依据；C 错：BFD 支持多跳检测，可检测经过三层转发的路径；D 错：BFD 的核心价值正是联动路由协议实现快速收敛，而不是只上报告警。",
+    "tags": [
+      "BFD",
+      "OSPF",
+      "快速收敛"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-reliability-0006",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "single",
+    "stem": "VRRP 备份组所使用的虚拟 MAC 地址格式是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "0000-5e00-01XX，其中 XX 为 VRID 的十六进制值"
+      },
+      {
+        "key": "B",
+        "text": "00e0-fc00-00XX，其中 XX 为 VRID 的十六进制值"
+      },
+      {
+        "key": "C",
+        "text": "0180-c200-00XX，其中 XX 为 VRID 的十六进制值"
+      },
+      {
+        "key": "D",
+        "text": "0000-5e00-02XX，其中 XX 为 VRID 的十六进制值"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：VRRP 的虚拟 MAC 固定为 00-00-5E-00-01-{VRID}（RFC 5798），Master 用该 MAC 响应针对虚拟 IP 的 ARP 请求。C 的 01-80-C2-00-00-XX 是生成树等链路层协议使用的组播 MAC 前缀；B 的 00-E0-FC 是华为设备常见的接口 MAC 前缀；D 与标准格式不符。掌握该格式也有助于抓包时快速识别 VRRP 报文——VRRPv2 使用 IP 协议号 112、目的地址 224.0.0.18。",
+    "tags": [
+      "VRRP",
+      "虚拟 MAC",
+      "VRID"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-reliability-0007",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "multi",
+    "stem": "某园区核心旁挂双机部署：两台核心交换机之间通过 Eth-Trunk 互联，同时为各业务 VLAN 部署 VRRP 作为网关冗余。关于该组合方案，下列注意事项正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "应对上行接口与互联 Eth-Trunk 配置 VRRP track 联动，任一关键链路故障时降低优先级触发切换，避免出现双 Master 造成转发黑洞"
+      },
+      {
+        "key": "B",
+        "text": "Eth-Trunk 的聚合模式（手工负载分担 / LACP）两端必须一致，成员口的速率、双工、VLAN 等配置也应保持一致"
+      },
+      {
+        "key": "C",
+        "text": "为防止双 Master，应把 VRRP 的 advertise 定时器配置得比 Eth-Trunk 的 LACP 超时时间更长"
+      },
+      {
+        "key": "D",
+        "text": "可以在同一接口上为不同 VLAN 创建多个 VRRP 备份组（不同 VRID），把不同 VLAN 的 Master 分散到两台设备上实现负载分担"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explain": "解析：双机方案中最需要防范的是互联链路故障导致两台设备互相收不到 VRRP 报文而形成双 Master，因此要用 track 联动关键链路，并在链路恢复后按抢占策略有序收敛；Eth-Trunk 两侧的聚合模式与成员口参数必须匹配，否则成员口无法正常加入或转发；为不同 VLAN 使用不同 VRID 并把 Master 分散，是双机场景实现网关负载分担的常规做法。C 错：延长 advertise 定时器只会让故障检测更慢，与防止双 Master 无关，正确的做法是依靠 track 联动与可靠的互联链路。",
+    "tags": [
+      "VRRP",
+      "Eth-Trunk",
+      "双机热备",
+      "双 Master"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-reliability-0008",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "single",
+    "stem": "关于华为设备上 Eth-Trunk 两种工作模式的比较，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "手工负载分担模式下两端不进行协议协商，只要成员口配置匹配即可加入，无法检测链路错连；LACP 模式通过 LACPDU 协商，具备链路错连检测与活动链路选举能力"
+      },
+      {
+        "key": "B",
+        "text": "手工负载分担模式可以检测链路错连，LACP 模式不能"
+      },
+      {
+        "key": "C",
+        "text": "两种模式下两端的成员口数量都必须相同，且成员口必须配置为 Trunk 类型"
+      },
+      {
+        "key": "D",
+        "text": "LACP 模式下的活动链路数量被固定为成员口数量，无法调整"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：手工负载分担模式（manual load-balance）由管理员手工指定成员口，建立过程不依赖协议协商，因此无法检测链路错连；LACP 模式通过 LACPDU 交互系统优先级、系统 MAC、端口优先级与端口号等信息，能够发现错连并进行活动链路选举，还可以用 `max active-linknumber` 限制活动链路数量，其余成员口作为备份。C 错：两端成员口数量并不要求相同（LACP 下按协商结果确定），成员口也可以是 Access/Trunk/Hybrid；D 错，活动链路数可通过 max active-linknumber 调整。",
+    "tags": [
+      "Eth-Trunk",
+      "LACP",
+      "链路聚合"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-reliability-0009",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "single",
+    "stem": "VRRPv2 通告报文封装在 IP 报文中，其 IP 协议号与目的组播地址分别是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "协议号 112，目的地址 224.0.0.18"
+      },
+      {
+        "key": "B",
+        "text": "协议号 89，目的地址 224.0.0.5"
+      },
+      {
+        "key": "C",
+        "text": "协议号 17，目的地址 224.0.0.18"
+      },
+      {
+        "key": "D",
+        "text": "协议号 112，目的地址 224.0.0.5"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：VRRP 使用 IP 协议号 112，VRRPv2 通告报文的目的地址为 224.0.0.18，TTL 为 255（限本网段传输）。B 中 89 是 OSPF、224.0.0.5 是 AllSPFRouters；C 中 17 是 UDP；D 把协议号与目的地址错误地拼在了一起。这些数值在抓包分析与 ACL 放通策略（如放通 VRRP 报文）时经常用到。",
+    "tags": [
+      "VRRP",
+      "协议号 112",
+      "224.0.0.18"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-reliability-0010",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "multi",
+    "stem": "企业出口部署两台防火墙做双机热备，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "两台设备之间需要专门的心跳链路，用于同步会话表、配置与状态信息"
+      },
+      {
+        "key": "B",
+        "text": "主备模式下只有主设备转发业务流量，主备角色通过 VRRP/HRP 等状态协商决定，故障时发生切换"
+      },
+      {
+        "key": "C",
+        "text": "由于会话表已同步，切换后已建立的 TCP 连接通常无需重建，业务中断时间可以很短"
+      },
+      {
+        "key": "D",
+        "text": "只要配置了 VRRP，两台设备的会话表就会自动同步，无需额外的心跳机制"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：双机热备由两部分组成——冗余选举（如 VRRP 决定谁转发）与状态同步（如 HRP 把会话表、Server-map、配置等同步到对端）。有了会话表同步，切换后已建立的连接可以继续使用原有表项转发，因此业务几乎无感知；若没有同步，切换会导致连接中断、需要重新握手。D 错：VRRP 只负责网关冗余与主备选举，本身不传递任何会话状态，会话同步必须依赖专门的心跳通道与同步机制。",
+    "tags": [
+      "双机热备",
+      "HRP",
+      "会话同步",
+      "VRRP"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-reliability-0011",
+    "exam": "H12-831",
+    "domain": "reliability",
+    "type": "judge",
+    "stem": "判断：BFD 会话既可以由路由协议（如 OSPF、BGP、IS-IS、静态路由）触发动态建立，也可以手工静态配置本地标识符与远端标识符来建立。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。BFD 提供静态与动态两种会话建立方式：静态方式下两端手工配置本地与远端 Discriminator，适用于需要精确控制检测参数的场景；动态方式由上层应用在需要检测时触发，BFD 自动协商标识符。无论哪种方式，会话建立后都由 BFD 独立完成快速检测，检测到故障后通知上层应用（路由协议拆除邻居、静态路由/VGMP 等切换转发路径）。",
+    "tags": [
+      "BFD",
+      "静态会话",
+      "动态会话"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-automation-0001",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "single",
+    "stem": "某自动化脚本中执行了如下 Python 代码，输出结果是？\n\nvlans = [10, 20, 30]\nresult = [v for v in vlans if v > 15]\nprint(len(result), result)",
+    "options": [
+      {
+        "key": "A",
+        "text": "3 [10, 20, 30]"
+      },
+      {
+        "key": "B",
+        "text": "2 [20, 30]"
+      },
+      {
+        "key": "C",
+        "text": "2 [10, 20]"
+      },
+      {
+        "key": "D",
+        "text": "1 [30]"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：列表推导式 `[v for v in vlans if v > 15]` 遍历 vlans，把满足 v > 15 的元素保留下来，得到 [20, 30]，因此长度是 2。其等价写法是 result = [] 后循环 `for v in vlans: if v > 15: result.append(v)`。C 的过滤条件相当于 v < 25，D 相当于 v > 25。在网络自动化脚本中，列表推导式常用于快速过滤接口列表、VLAN 列表等。",
+    "tags": [
+      "Python",
+      "列表推导式",
+      "基础语法"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-automation-0002",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "single",
+    "stem": "某自动化脚本用字典保存设备信息：dev = {\"host\": \"10.0.0.1\", \"vendor\": \"huawei\"}。执行 dev.get(\"port\", 22) 的返回值是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "抛出 KeyError 异常"
+      },
+      {
+        "key": "B",
+        "text": "22"
+      },
+      {
+        "key": "C",
+        "text": "None"
+      },
+      {
+        "key": "D",
+        "text": "\"port\""
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：字典的 `get(key, default)` 方法在键不存在时返回给定的默认值，而不是抛异常，因此返回 22。A 是使用 dev[\"port\"] 这种下标访问不存在键时的行为；C 是不提供默认值时 get 的返回值；D 返回的是键名本身，语义不对。在网络自动化脚本中经常用 `get` 为可选参数（如默认 SSH 端口 22、默认超时时间）提供兜底值，避免因缺少字段导致脚本中断。",
+    "tags": [
+      "Python",
+      "字典",
+      "get 方法"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-automation-0003",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "multi",
+    "stem": "关于 NETCONF 协议，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "NETCONF 通常使用 SSH 作为传输层（默认 TCP 830 端口），通过 XML 编码的 RPC 交换配置与状态数据"
+      },
+      {
+        "key": "B",
+        "text": "常见操作包括 get、get-config、edit-config、copy-config、lock/unlock 等"
+      },
+      {
+        "key": "C",
+        "text": "edit-config 支持 merge、replace、create、delete、remove 等 operation 属性，可精确控制配置的合并与替换行为"
+      },
+      {
+        "key": "D",
+        "text": "NETCONF 只能读取设备配置，不能修改设备配置"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：NETCONF（RFC 6241）以 SSH 为主要传输映射（默认 TCP 830），所有 RPC 与数据均用 XML 编码；其操作集包括 get/get-config（读）、edit-config/copy-config（写）、lock/unlock（加解锁配置库）、delete-config、commit 等；`<edit-config>` 的 operation 属性（merge/replace/create/delete/remove）决定配置是合并还是替换，是实现幂等下发的基础。D 错：NETCONF 是读写协议，“只能读”是 SNMP GET 的典型特征。",
+    "tags": [
+      "NETCONF",
+      "XML",
+      "edit-config"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-network-automation-0004",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "multi",
+    "stem": "关于 YANG 模型，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "YANG 是一种数据建模语言，用于定义 NETCONF/RESTCONF 所操作的数据结构、类型与约束"
+      },
+      {
+        "key": "B",
+        "text": "YANG 中的 container、list、leaf、leaf-list 分别用于描述容器节点、列表节点、叶子节点与叶子列表"
+      },
+      {
+        "key": "C",
+        "text": "YANG 支持通过 import/include 复用其他模块，并可用 deviation 描述与标准模型之间的差异"
+      },
+      {
+        "key": "D",
+        "text": "YANG 是各厂商私有的建模语言，必须为每个厂商单独编写一套模型，无法标准化"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：YANG（RFC 6020/7950）是 IETF 标准化的数据建模语言，配合 NETCONF/RESTCONF 使用，用 container/list/leaf/leaf-list 等语句描述层次化的数据结构，并可定义类型、取值范围、必选性等约束；import/include 用于模块复用，deviation 用于声明实现与标准模型的差异（如某节点是否支持、取值范围是否不同）。D 错：业界已有大量标准模型（如 ietf-interfaces、ietf-ip），OpenConfig 也在其上定义跨厂商模型；厂商可以通过私有模块或 deviation 扩展，但不代表模型必须各写一套。",
+    "tags": [
+      "YANG",
+      "数据建模",
+      "deviation"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-network-automation-0005",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "single",
+    "stem": "关于 RESTful API 的 HTTP 方法及其幂等性，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "GET 用于查询、PUT 用于创建或整体替换、POST 用于创建、DELETE 用于删除；其中 GET、PUT、DELETE 是幂等的，POST 通常不是"
+      },
+      {
+        "key": "B",
+        "text": "所有 HTTP 方法都是幂等的，重复调用不会产生额外影响"
+      },
+      {
+        "key": "C",
+        "text": "POST 是幂等的，PUT 不是"
+      },
+      {
+        "key": "D",
+        "text": "RESTful API 只能使用 HTTPS，不能使用 HTTP"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：REST 语义中，GET 只读取、无副作用；PUT 用完整资源替换指定 URI 上的资源，重复执行结果相同；DELETE 删除资源，重复执行的最终状态也相同，因此这三者幂等。POST 通常用于创建新资源，每次调用都会产生新资源（如新建一条 ACL 规则），因此不幂等。B、C 与上述语义不符；D 错：REST 是一种架构风格，HTTP/HTTPS 都能承载，出于安全考虑生产环境推荐 HTTPS。",
+    "tags": [
+      "RESTful API",
+      "HTTP 方法",
+      "幂等性"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-network-automation-0006",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "single",
+    "stem": "关于 Telemetry（流式遥测）与传统 SNMP 采集方式的差异，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "传统 SNMP 由网管周期性轮询（Pull），采样精度受轮询周期限制；Telemetry 由设备主动、周期性地推送（Push）数据，可支持更高的采集精度"
+      },
+      {
+        "key": "B",
+        "text": "Telemetry 使用 UDP 161 端口，SNMP 使用 TCP 830 端口"
+      },
+      {
+        "key": "C",
+        "text": "传统 SNMP 是推送模式，Telemetry 是轮询模式"
+      },
+      {
+        "key": "D",
+        "text": "Telemetry 只能采集接口流量，无法采集 CPU、内存等状态数据"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：SNMP 采用 Manager 轮询 Agent 的 Pull 模式，采集周期通常为分钟级，大量设备同时轮询会给管理站和设备 CPU 带来压力，且采样精度受周期限制；Telemetry 采用设备主动 Push 模式，支持秒级甚至亚秒级的采集间隔，精度和数据完整性更好，适合大规模实时监控。B 错：SNMP 使用 UDP 161/162，NETCONF 使用 TCP 830；C 把两者说反了；D 错，Telemetry 可订阅多种数据源（接口、CPU、内存、转发表项等）。",
+    "tags": [
+      "Telemetry",
+      "SNMP",
+      "Push 与 Pull"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-automation-0007",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "single",
+    "stem": "关于 Ansible 在网络自动化中的应用，下列说法正确的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Ansible 采用无代理（Agentless）架构，通过 SSH 或 NETCONF 等连接被管设备，用 YAML 编写 Playbook，网络模块通常按幂等方式设计"
+      },
+      {
+        "key": "B",
+        "text": "Ansible 必须在每台被管设备上安装 Agent 程序才能工作"
+      },
+      {
+        "key": "C",
+        "text": "Ansible Playbook 使用 JSON 编写，且同一 Playbook 不可重复执行"
+      },
+      {
+        "key": "D",
+        "text": "Ansible 只能管理 Linux 服务器，无法管理网络设备"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：Ansible 基于 Python 实现，采用无代理架构，通过 SSH（CLI 或 NETCONF/RESTCONF）与被管设备交互；Playbook 用 YAML 编写，由 Play、Task、Handler 等组成，网络模块通常被设计为幂等——重复执行同一 Playbook 不会产生额外变更。B 与无代理架构相反；C 中 Playbook 用的是 YAML 而不是 JSON，且幂等性正是其可重复执行的基础；D 错，Ansible 通过社区与厂商提供的网络模块（含华为平台模块）可以管理主流网络设备。",
+    "tags": [
+      "Ansible",
+      "Playbook",
+      "YAML",
+      "Agentless"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-network-automation-0008",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "multi",
+    "stem": "关于华为 iMaster NCE（网络控制器）在自动化运维中的作用，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "通过南向接口（如 NETCONF、SNMP、Telemetry）纳管设备，通过北向接口（如 RESTful API）向上层应用或运维平台开放能力"
+      },
+      {
+        "key": "B",
+        "text": "支持基于意图或模板的配置下发，把网络侧的配置动作抽象为业务模型，减少逐台设备的命令行配置"
+      },
+      {
+        "key": "C",
+        "text": "可基于 Telemetry 采集的数据做实时监控与告警，并结合分析能力实现故障定位与网络优化"
+      },
+      {
+        "key": "D",
+        "text": "控制器纳管设备后，报文的转发行为由控制器逐包计算并下发，设备不再需要本地的转发表项"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：控制器的典型分层是南向对接设备（NETCONF/SNMP/Telemetry 等协议）、北向对上层系统开放（RESTful API），并提供业务模型/模板化的配置能力与基于采集数据的监控、分析与优化能力。D 错：控制器负责集中管理与策略编排，具体转发仍由设备依据下发的路由表/转发表执行，转发面是分布式的，不存在“控制器逐包计算”的实现方式。",
+    "tags": [
+      "iMaster NCE",
+      "SDN",
+      "Telemetry",
+      "北向接口"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-network-automation-0009",
+    "exam": "H12-831",
+    "domain": "network-automation",
+    "type": "judge",
+    "stem": "判断：NETCONF 协议默认使用 TCP 830 端口，所有 RPC 与数据均采用 XML 编码，传输层通常使用 SSH。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。RFC 6241 规定 NETCONF 以 SSH 作为主要传输映射（默认 TCP 830），也定义了基于 TLS 等其他映射；协议的消息层与操作层都用 XML 编码。实际部署时，需要先在设备上使能 NETCONF 功能并配置具有相应权限的 SSH 用户，之后才能用 ncclient 等工具或脚本建立会话、下发配置。",
+    "tags": [
+      "NETCONF",
+      "TCP 830",
+      "XML"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-management-0001",
+    "exam": "H12-831",
+    "domain": "network-management",
+    "type": "single",
+    "stem": "某网管要求对设备的管理访问同时具备身份认证与数据加密能力。在 SNMPv3 中，承担认证与加密职责的安全机制是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "基于用户的安全模型 USM（User-based Security Model）"
+      },
+      {
+        "key": "B",
+        "text": "基于视图的访问控制模型 VACM"
+      },
+      {
+        "key": "C",
+        "text": "团体名（community）与 ACL 组合"
+      },
+      {
+        "key": "D",
+        "text": "MIB 视图"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：SNMPv3 的安全体系由 USM 与 VACM 共同构成：USM 负责报文级的安全，提供认证（MD5/SHA）与加密（DES/AES），并支持 noAuthNoPriv、authNoPriv、authPriv 三种安全级别；VACM 负责授权，决定“哪个用户/组能访问哪些 MIB 对象”。C 的团体名是 SNMPv1/v2c 的弱认证手段，不提供加密；D 的 MIB 视图是 VACM 中的概念，用于限定可访问的对象范围，不是提供认证加密的机制。",
+    "tags": [
+      "SNMPv3",
+      "USM",
+      "VACM"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-management-0002",
+    "exam": "H12-831",
+    "domain": "network-management",
+    "type": "multi",
+    "stem": "关于 SNMP 的 Trap 与 Inform 操作，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Trap 由 Agent 主动发送给 NMS，不需要 NMS 确认，接收端口默认为 UDP 162"
+      },
+      {
+        "key": "B",
+        "text": "Inform 也需要 NMS 返回确认响应，可靠性比 Trap 高，但会消耗更多设备与管理站资源"
+      },
+      {
+        "key": "C",
+        "text": "Trap 与 Inform 只能由 Agent 单方面发起，NMS 无法配置设备发送哪些 Trap"
+      },
+      {
+        "key": "D",
+        "text": "设备上可以通过配置指定 Trap/Inform 的目的主机、SNMP 版本与认证参数（团体名或 SNMPv3 用户名）"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explain": "解析：Trap 是“发了不管”的告警上报，Agent 主动发送、无需确认，网络丢包时告警可能丢失；Inform（SNMPv2c/v3 引入）要求 NMS 回送 Response 确认，可靠性更高，但需要维护重传与确认状态、开销更大。设备侧可以通过配置指定上报的目的地址、使用的版本与认证参数，并可按模块开启或关闭 Trap 上报。C 错：Trap 的开关、目的主机与参数都是可以在设备上配置的。",
+    "tags": [
+      "SNMP",
+      "Trap",
+      "Inform",
+      "告警上报"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-network-management-0003",
+    "exam": "H12-831",
+    "domain": "network-management",
+    "type": "single",
+    "stem": "华为设备（VRP）的日志共分 8 个级别（0~7），其中级别 3 对应的含义是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "Error（错误）"
+      },
+      {
+        "key": "B",
+        "text": "Warning（警告）"
+      },
+      {
+        "key": "C",
+        "text": "Critical（严重）"
+      },
+      {
+        "key": "D",
+        "text": "Emergency（紧急）"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：VRP 的日志级别由高到低（数值由小到大）为 0 Emergency、1 Alert、2 Critical、3 Error、4 Warning、5 Notification、6 Informational、7 Debugging，数值越小越严重。因此级别 3 是 Error；B 的 Warning 是级别 4，C 的 Critical 是级别 2，D 的 Emergency 是级别 0。在 `info-center source` 中配置 level 时，级别数值越小，意味着只有越严重的日志才会被输出。",
+    "tags": [
+      "Syslog",
+      "日志级别",
+      "info-center"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-network-management-0004",
+    "exam": "H12-831",
+    "domain": "network-management",
+    "type": "multi",
+    "stem": "关于 SNMP 的 MIB 树与 OID，下列描述正确的有哪些？",
+    "options": [
+      {
+        "key": "A",
+        "text": "接口描述对象 ifDescr 位于 mib-2 的 interfaces 组下，其 OID 为 1.3.6.1.2.1.2.2.1.2"
+      },
+      {
+        "key": "B",
+        "text": "设备系统信息（如 sysName）位于 mib-2 的 system 组（1.3.6.1.2.1.1）下"
+      },
+      {
+        "key": "C",
+        "text": "厂商私有 MIB 对象位于 private.enterprises 分支下（如华为为 1.3.6.1.4.1.2011）"
+      },
+      {
+        "key": "D",
+        "text": "每个设备的 OID 都必须由 IANA 单独分配，不同设备上同一类对象的 OID 互不相同"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：MIB-2（1.3.6.1.2.1）下的 system 组描述设备本身，interfaces 组描述接口，ifDescr 的完整 OID 为 1.3.6.1.2.1.2.2.1.2；厂商私有对象统一挂在 iso.org.dod.internet.private.enterprises（1.3.6.1.4.1）下，各厂商申请到独立的私有分支（华为为 1.3.6.1.4.1.2011）。D 错：OID 描述的是“被管对象的类型”，是全局标准化的，同类对象在所有设备上 OID 相同；同一对象的多个实例通过索引（如 ifIndex）区分。",
+    "tags": [
+      "SNMP",
+      "MIB",
+      "OID",
+      "ifDescr"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-network-management-0005",
+    "exam": "H12-831",
+    "domain": "network-management",
+    "type": "judge",
+    "stem": "判断：在大规模网络中，SNMP 轮询的采集精度受轮询周期限制，且管理站与被管设备的 CPU 开销随被管对象数量增长；Telemetry 采用设备主动推送并支持按需订阅，可只上报关心的数据并支持更高的采样频率，因此更适合大规模、高精度的实时监控。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。SNMPv2c/v3 的 GetBulk 虽然能在一次交互中读取多个对象、缓解轮询效率问题，但本质上仍是 Pull 模式，采集精度受周期约束，且轮询大量对象会同时占用管理站与设备资源。Telemetry 通过订阅（subscription）机制由设备按约定周期主动上报，采样间隔可小到秒级甚至更小，并能按需只采集关心的数据源，因此在数据中心等大规模场景下更有优势；当然其数据量本身也很大，需要配套的采集器与分析平台承载。",
+    "tags": [
+      "Telemetry",
+      "SNMP",
+      "大规模监控"
+    ],
+    "difficulty": 3
+  },
+  {
+    "id": "831-troubleshooting-0001",
+    "exam": "H12-831",
+    "domain": "troubleshooting",
+    "type": "single",
+    "stem": "用户报告“无法访问某服务器”，管理员按 OSI 模型自下而上（物理层 → 应用层）进行排查。第一步应确认的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "应用层服务是否正常，如服务器上 Web 进程是否在监听"
+      },
+      {
+        "key": "B",
+        "text": "物理层与数据链路层是否正常，如接口状态、光模块收发功率、错包计数、VLAN 是否放通"
+      },
+      {
+        "key": "C",
+        "text": "BGP 是否优选出正确的路由"
+      },
+      {
+        "key": "D",
+        "text": "DNS 解析结果是否正确"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：自下而上排查的逻辑是先排除最底层的连通性问题，再逐层向上定位：物理层（接口 up、光功率、线缆）、数据链路层（错包/CRC 计数、VLAN 放通、MAC 学习）→ 网络层（路由、ACL/NAT）→ 传输层（端口是否被策略阻断）→ 应用层（服务是否监听、证书、负载均衡）。A、D 属应用层与上层问题，C 属网络层，直接跳过去排查容易忽略最基础的链路故障。",
+    "tags": [
+      "分层排查",
+      "故障定位",
+      "接口状态"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-troubleshooting-0002",
+    "exam": "H12-831",
+    "domain": "troubleshooting",
+    "type": "single",
+    "stem": "在华为设备上，要确认去往 10.1.1.1 的报文会匹配哪条路由、下一跳是谁，最直接的命令是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "display ip routing-table 10.1.1.1"
+      },
+      {
+        "key": "B",
+        "text": "display arp all"
+      },
+      {
+        "key": "C",
+        "text": "display interface brief"
+      },
+      {
+        "key": "D",
+        "text": "display current-configuration"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：`display ip routing-table <目的地址>` 会按最长匹配原则显示去往该地址所命中的最优路由，包含协议来源、优先级、度量、下一跳与出接口，是确认转发路径的第一步；如需查看实际下发到转发平面的表项，可再用 `display fib <目的地址>`。B 只显示 IP 与 MAC 的映射，C 只看接口收发状态，D 看的是配置而非转发决策，都无法回答“报文往哪里走”。",
+    "tags": [
+      "display ip routing-table",
+      "路由表",
+      "故障定位"
+    ],
+    "difficulty": 1
+  },
+  {
+    "id": "831-troubleshooting-0003",
+    "exam": "H12-831",
+    "domain": "troubleshooting",
+    "type": "single",
+    "stem": "在华为设备上需要抓取某接口的报文做协议分析，下列做法最合适的是？",
+    "options": [
+      {
+        "key": "A",
+        "text": "先执行 terminal monitor，再把所有模块的 debugging 全部打开进行观察"
+      },
+      {
+        "key": "B",
+        "text": "使用 capture-packet interface GigabitEthernet0/0/1 destination file cap.cap 抓包，导出后用 Wireshark 分析"
+      },
+      {
+        "key": "C",
+        "text": "用 display interface GigabitEthernet0/0/1 查看收发计数，替代抓包分析"
+      },
+      {
+        "key": "D",
+        "text": "使用 ping -a 指定源地址探测对端"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explain": "解析：华为设备支持 `capture-packet` 直接在设备上抓包并保存为 pcap 文件，导出后可用 Wireshark 深入分析协议交互，对现网影响小、定位准确，通常还可以配合 ACL 只抓取关心的流量。A 错：在生产设备上全模块打开 debugging 会大量消耗 CPU，甚至导致协议震荡或业务中断，应仅在必要时开启特定模块并及时 `undo debugging all`；C 的接口计数只能看到收发包与错包统计，看不到报文内容；D 是连通性测试工具，无法替代抓包。",
+    "tags": [
+      "capture-packet",
+      "抓包",
+      "Wireshark",
+      "debugging"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-troubleshooting-0004",
+    "exam": "H12-831",
+    "domain": "troubleshooting",
+    "type": "multi",
+    "stem": "某办公室的 PC 无法通过 DHCP 获取 IP 地址，网络中使用了 DHCP 中继。下列哪些是可能的原因及对应的定位手段？",
+    "options": [
+      {
+        "key": "A",
+        "text": "接入交换机的 DHCP Snooping 把连接 DHCP 服务器的上行口配成了非信任端口，导致 Offer/ACK 被丢弃；可检查 DHCP Snooping 配置并把上行口设为信任端口"
+      },
+      {
+        "key": "B",
+        "text": "中继设备未正确配置 DHCP 中继功能（如未指定服务器地址），或到 DHCP 服务器的路由不可达；可检查中继配置与到服务器的路由表"
+      },
+      {
+        "key": "C",
+        "text": "DHCP 服务器/网关上的地址池耗尽，或没有为对应网段配置地址池；可检查地址池使用情况与服务器日志"
+      },
+      {
+        "key": "D",
+        "text": "必须在 PC 与服务器之间的设备上配置 IPSG，否则 DHCP 报文会被丢弃"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explain": "解析：DHCP 获取地址失败常见的三类原因正是“中间设备拦截”“中继/路由不通”“服务器侧无地址可用”：DHCP Snooping 的信任端口模型会丢弃来自非信任端口的服务器应答；中继未配置或到服务器不可达会导致请求无法送达/应答无法返回；地址池耗尽或缺少对应网段地址池则服务器根本无地址可分配。D 错：IPSG 是可选的安全特性，未配置 IPSG 不会导致 DHCP 报文被丢弃，而且 IPSG 只对非 DHCP 的 IP 报文做源地址校验。",
+    "tags": [
+      "DHCP",
+      "DHCP Snooping",
+      "中继",
+      "故障定位"
+    ],
+    "difficulty": 2
+  },
+  {
+    "id": "831-troubleshooting-0005",
+    "exam": "H12-831",
+    "domain": "troubleshooting",
+    "type": "judge",
+    "stem": "判断：两台路由器之间的 OSPF 邻居长期停留在 ExStart 状态，常见原因是接口 MTU 不一致或 Router ID 冲突；而接口掩码不一致（广播型网络）、区域号不一致或认证不匹配通常会导致 Hello 校验失败、邻居无法形成，一般不会表现为 ExStart 卡住。",
+    "options": [
+      {
+        "key": "A",
+        "text": "正确"
+      },
+      {
+        "key": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explain": "解析：正确。ExStart/Exchange 阶段双方通过 DD 报文协商主从关系并交换 LSA 头部摘要，MTU 不一致会使大尺寸 DD 报文被对端丢弃、协商无法推进；Router ID 冲突会让双方都坚持自己是 Master 而反复重传 DD，二者是卡在 ExStart 的典型原因。而掩码（广播型网络需一致）、区域 ID、Hello/Dead 间隔、认证、E-bit 等字段是 Hello 报文的校验项，任一项不符都会导致 Hello 被丢弃、邻居关系停留在 Down/Init 而根本建立不起来，因此不会表现为 ExStart 卡住。",
+    "tags": [
+      "OSPF",
+      "ExStart",
+      "邻居建立",
+      "MTU"
+    ],
+    "difficulty": 3
+  }
+]

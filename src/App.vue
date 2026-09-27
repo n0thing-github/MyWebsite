@@ -1,10 +1,11 @@
 <script setup>
-import { onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
 import BackdropFX from './components/BackdropFX.vue'
 import Preloader from './components/Preloader.vue'
 import NavBar from './components/NavBar.vue'
 import HomePage from './components/HomePage.vue'
 import ForgettingCurvePage from './components/ForgettingCurvePage.vue'
+import HcipPage from './components/hcip/HcipPage.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import { useRoute, syncViewportAfterRoute } from './router'
 
@@ -12,6 +13,19 @@ const { route } = useRoute()
 
 const HOME_TITLE = 'Pius.Prime — PIUSPRIME 的个人主页'
 const CURVE_TITLE = '艾宾浩斯遗忘曲线 — Pius.Prime'
+const HCIP_TITLE = 'HCIP-Datacom 备考 — Pius.Prime'
+
+const TITLES = {
+  home: HOME_TITLE,
+  ebbinghaus: CURVE_TITLE,
+  hcip: HCIP_TITLE,
+}
+
+/**
+ * 备考模块自带底部标签栏与紧凑顶栏，需要独占手机屏幕：
+ * 站点导航栏（汉堡菜单）会和底部标签栏形成两套导航，页脚也会挤占答题空间。
+ */
+const immersive = computed(() => route.value === 'hcip')
 
 let observer = null
 
@@ -42,13 +56,13 @@ watch(route, async () => {
   // 从二级页面点回"关于/技能"这类锚点时，DOM 要到 nextTick 之后才存在，
   // 浏览器原生的锚点定位早已错过这个时机，所以在这里补一次。
   syncViewportAfterRoute(window.location.hash)
-  document.title = route.value === 'home' ? HOME_TITLE : CURVE_TITLE
+  document.title = TITLES[route.value] || HOME_TITLE
 })
 
 onMounted(() => {
   // 遮罩揭示前就让首屏内容就绪
   initObserver()
-  document.title = route.value === 'home' ? HOME_TITLE : CURVE_TITLE
+  document.title = TITLES[route.value] || HOME_TITLE
 })
 
 onBeforeUnmount(() => {
@@ -70,10 +84,11 @@ onBeforeUnmount(() => {
 
   <Preloader />
 
-  <NavBar />
+  <NavBar v-if="!immersive" />
 
   <HomePage v-if="route === 'home'" />
   <ForgettingCurvePage v-else-if="route === 'ebbinghaus'" />
+  <HcipPage v-else-if="route === 'hcip'" />
 
-  <SiteFooter />
+  <SiteFooter v-if="!immersive" />
 </template>

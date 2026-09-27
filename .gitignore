@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# 临时验证脚本（放在 src 下是为了能被 Vite 开发服务器加载、
+# 从而用与真实运行时一致的模块解析来跑纯函数测试；不属于产品代码）
+src/__verify*.mjs
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

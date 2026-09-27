@@ -22,6 +22,7 @@ const navItems = [
   { label: '联系', href: '#contact' },
   // 二级页面入口（hash 路由，见 src/router.js 的命名空间约定）
   { label: '遗忘曲线', href: '#/ebbinghaus' },
+  { label: 'HCIP 备考', href: '#/hcip' },
 ]
 
 /**
