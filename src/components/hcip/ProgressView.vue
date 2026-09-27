@@ -9,6 +9,8 @@ import { formatDateFullCN, formatMinutes, lastNDaysKey, toDateKey, today, daysBe
 import { downloadText, backupFilename, copyText } from '../../study/backupFile'
 import { Chip, ProgressBar, Sheet, StatCard } from './ui'
 import ImportPanel from './ImportPanel.vue'
+import SyncPanel from './SyncPanel.vue'
+import { useSync } from '../../study/useSync'
 
 /**
  * 进度与设置
@@ -22,7 +24,12 @@ const store = useStudyStore()
 const { forecast, plannedMinutes, effectiveDailyMinutes, pace } = useStudyPlan()
 
 const importOpen = ref(false)
+const syncOpen = ref(false)
 const confirmReset = ref(false)
+
+const sync = useSync()
+const syncEnabled = computed(() => sync.enabled.value)
+const syncStatusText = computed(() => sync.status.message || '未启用')
 
 const examMeta = computed(() => store.examMeta.value)
 
@@ -372,6 +379,22 @@ const storageKB = computed(() => Math.round(store.storageBytes.value / 1024))
       </p>
     </section>
 
+    <!-- 云同步 -->
+    <section class="block">
+      <header class="block-head">
+        <h3 class="block-title">云同步</h3>
+        <span class="block-meta">{{ syncStatusText }}</span>
+      </header>
+      <p class="note no-border">
+        把进度同步到你自己的一个 GitHub secret Gist：手机和电脑共用一份进度，
+        清缓存、换设备也不用怕。断网时照常刷题，只是暂时不往云端推。
+      </p>
+      <div class="btn-row">
+        <Chip @click="syncOpen = true">{{ syncEnabled ? '管理云同步' : '启用云同步' }}</Chip>
+      </div>
+      <p v-if="sync.status.error" class="warn-msg">{{ sync.status.error }}</p>
+    </section>
+
     <!-- 题库说明与免责 -->
     <section class="block">
       <h3 class="block-title">关于题库</h3>
@@ -391,6 +414,10 @@ const storageKB = computed(() => Math.round(store.storageBytes.value / 1024))
 
     <Sheet :open="importOpen" title="导入题库" @close="importOpen = false">
       <ImportPanel />
+    </Sheet>
+
+    <Sheet :open="syncOpen" title="云同步（GitHub Gist）" @close="syncOpen = false">
+      <SyncPanel />
     </Sheet>
   </div>
 </template>

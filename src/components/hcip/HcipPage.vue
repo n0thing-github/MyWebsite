@@ -3,6 +3,7 @@ import { computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, setSubRoute } from '../../router'
 import { useStudyStore } from '../../study/useStudyStore'
 import { useStudyPlan } from '../../study/useStudyPlan'
+import { initSync } from '../../study/useSync'
 import TabBar from './TabBar.vue'
 import StudyTopBar from './StudyTopBar.vue'
 import StorageBar from './StorageBar.vue'
@@ -63,6 +64,8 @@ onMounted(() => {
   store.setActiveExamIfEmpty()
   store.refreshDay()
   store.ensureBankLoaded()
+  // 云同步：只有进过备考模块才会加载这条链路（未配置时它什么也不做）
+  initSync()
 })
 
 // 跨天刷新：碎片时间使用常常第二天才打开，日期不能停在昨天

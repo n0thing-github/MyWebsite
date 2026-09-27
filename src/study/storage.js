@@ -333,6 +333,25 @@ export function loadStateWithRecovery() {
   return { state: defaultState(), recoveredFrom: 'failed', hasBackup }
 }
 
+/**
+ * 读取存档信封（写入时间 + 校验和）。
+ * 校验和就是这份数据的"版本号"：同步模块据此判断本地有没有新变化，
+ * 不需要在响应式 state 里额外维护计数器（那样会在 flush 内触发深 watch 死循环）。
+ */
+export function readEnvelope() {
+  const raw = safeGetRaw(KEY)
+  if (!raw) return { savedAt: '', checksum: '' }
+  try {
+    const parsed = JSON.parse(raw)
+    return {
+      savedAt: typeof parsed._savedAt === 'string' ? parsed._savedAt : '',
+      checksum: typeof parsed._checksum === 'string' ? parsed._checksum : '',
+    }
+  } catch {
+    return { savedAt: '', checksum: '' }
+  }
+}
+
 /** 手动读取上一份快照（进度页的「用快照恢复」） */
 export function loadBackupState() {
   const bakRaw = safeGetRaw(BAK_KEY)
