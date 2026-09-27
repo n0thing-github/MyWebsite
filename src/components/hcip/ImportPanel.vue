@@ -18,8 +18,17 @@ const filename = ref('')
 const format = ref('auto')
 const report = ref(null)
 const busy = ref(false)
+/** 落库失败的原因（写不进去必须当场说，不能假装成功） */
+const writeError = ref('')
 
 const examCode = computed(() => store.currentExam.value)
+
+/** 本次要写入的体积与新旧占用（localStorage 有 5 MB 上限，上千题的题库要提醒） */
+const bulkKB = computed(() =>
+  report.value?.accepted?.length ? Math.round(JSON.stringify(report.value.accepted).length / 1024) : 0,
+)
+const usedKB = computed(() => Math.round(store.storageBytes.value / 1024))
+const bulkWarning = computed(() => bulkKB.value > 3000)
 
 function pickFile(evt) {
   const file = evt.target.files?.[0]
@@ -35,6 +44,7 @@ function pickFile(evt) {
 }
 
 function runParse() {
+  writeError.value = ''
   if (!text.value.trim()) {
     report.value = null
     return
@@ -46,11 +56,18 @@ function runParse() {
 function confirmImport() {
   if (!report.value?.accepted?.length) return
   busy.value = true
-  commitImport(report.value.accepted, examCode.value, {
+  const ok = commitImport(report.value.accepted, examCode.value, {
     name: filename.value || '粘贴导入',
     count: report.value.accepted.length,
   })
   busy.value = false
+  if (!ok) {
+    // 保留 text/report：用户可以重试或先把内容复制出去，不能连输入都清掉
+    writeError.value =
+      '题库没能写入本机存储（空间可能已满，或被浏览器/微信限制）。刷新后这批题会消失，建议先到「进度」页导出备份。'
+    return
+  }
+  writeError.value = ''
   report.value = null
   text.value = ''
   filename.value = ''
@@ -60,6 +77,7 @@ function reset() {
   text.value = ''
   report.value = null
   filename.value = ''
+  writeError.value = ''
 }
 </script>
 
@@ -119,14 +137,21 @@ function reset() {
         存在被拒绝的条目时不会导入任何内容，请修正后重新校验 —— 避免半套题库进入系统后难以排查。
       </p>
 
+      <p v-else-if="bulkWarning" class="warn-msg">
+        本次约 {{ bulkKB }} KB（本机已用约 {{ usedKB }} KB）。体量偏大，本机存储可能写不下，
+        建议分批导入。
+      </p>
+
+      <p v-if="writeError" class="warn-msg">{{ writeError }}</p>
+
       <Chip
-        v-else
+        v-if="!report.errors.length"
         block
         tone="cyan"
         :disabled="!report.accepted.length || busy"
         @click="confirmImport"
       >
-        确认导入 {{ report.accepted.length }} 题
+        {{ writeError ? `重试写入 ${report.accepted.length} 题` : `确认导入 ${report.accepted.length} 题` }}
       </Chip>
     </div>
 
@@ -220,6 +245,15 @@ function reset() {
 .ok b {
   font-family: var(--font-mono);
   color: var(--cyan);
+}
+
+/* 写不进去 / 体量偏大的警示：与题库校验的"被拒绝"用同一套红色语义 */
+.warn-msg {
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--red-bright);
+  border-left: 2px solid var(--red-bright);
+  padding-left: 10px;
 }
 
 .issues {

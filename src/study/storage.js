@@ -14,10 +14,66 @@
  */
 
 const KEY = 'piusprime.hcip.v1'
+/** 上一份"校验通过"的存档，主键被写坏时用来回滚 */
+const BAK_KEY = 'piusprime.hcip.v1.bak'
+/** 主键损坏时把原文挪到这里留档 —— 否则下一次写盘会把它当成快照轮转掉 */
+const CORRUPT_KEY = 'piusprime.hcip.v1.corrupt'
+/** 存储可用性探针（写完即删，不碰业务数据） */
+const PROBE_KEY = 'piusprime.hcip.probe'
 export const SCHEMA_VERSION = 1
 
 /** 事件日志上限：超过后把老数据按月聚合，只留汇总 */
 export const MAX_LOG_ENTRIES = 400
+
+/**
+ * djb2 校验和：用来识别"这份存档是不是被截断/改坏了"。
+ * 自己写而不是引依赖 —— 需求只有"同样的输入给同样的短字符串"这一点，
+ * 它不承担安全职责，只承担"完整性对不上就拒绝加载"。
+ */
+export function checksum(text) {
+  let h = 5381
+  for (let i = 0; i < text.length; i += 1) {
+    h = ((h << 5) + h + text.charCodeAt(i)) | 0
+  }
+  return (h >>> 0).toString(36)
+}
+
+/** 序列化成信封格式：在状态末尾追加 _savedAt 与 _checksum */
+function pack(state) {
+  const body = JSON.stringify({ ...state, _savedAt: new Date().toISOString() })
+  // 直接把校验和拼进 JSON 文本尾部，省掉一次完整 stringify（数据量大时是实打实的开销）
+  return `${body.slice(0, -1)},"_checksum":"${checksum(body)}"}`
+}
+
+/** 存档是否完整（旧版本没有 _checksum，按可信处理） */
+function isIntact(raw) {
+  try {
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') return false
+    if (typeof parsed._checksum !== 'string') return true
+    const { _checksum, ...rest } = parsed
+    return checksum(JSON.stringify(rest)) === _checksum
+  } catch {
+    return false
+  }
+}
+
+/**
+ * 探测本机存储是否真的可写。
+ * 隐私模式、配额满、微信清理过的环境会在这里当场暴露，
+ * 而不是等用户答了半小时才发现什么都没存下。
+ */
+export function probeStorage() {
+  if (typeof window === 'undefined') return false
+  try {
+    window.localStorage.setItem(PROBE_KEY, '1')
+    const ok = window.localStorage.getItem(PROBE_KEY) === '1'
+    window.localStorage.removeItem(PROBE_KEY)
+    return ok
+  } catch {
+    return false
+  }
+}
 
 export function defaultSettings() {
   return {
@@ -45,30 +101,33 @@ export function defaultState() {
     log: [],
     sessions: {},
     imported: [],
+    meta: defaultMeta(),
   }
 }
 
-/** 安全读：任何异常都降级为 null */
-function safeGet() {
+/** 与备份/同步相关的小元数据；全部可选，旧存档没有就补默认值 */
+export function defaultMeta() {
+  return {
+    /** 上一次导出备份的时间（ISO）；空串表示从没备份过 */
+    lastBackupAt: '',
+  }
+}
+
+function normalizeMeta(raw) {
+  const base = defaultMeta()
+  if (!raw || typeof raw !== 'object') return base
+  return {
+    lastBackupAt: typeof raw.lastBackupAt === 'string' ? raw.lastBackupAt : base.lastBackupAt,
+  }
+}
+
+/** 读任意键的原始字符串（损坏检测需要看原文，不能只拿解析结果） */
+function safeGetRaw(key) {
   if (typeof window === 'undefined') return null
   try {
-    const raw = window.localStorage.getItem(KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    return parsed && typeof parsed === 'object' ? parsed : null
+    return window.localStorage.getItem(key)
   } catch {
     return null
-  }
-}
-
-/** 安全写：返回是否成功（配额满/隐私模式返回 false） */
-function safeSet(state) {
-  if (typeof window === 'undefined') return false
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(state))
-    return true
-  } catch {
-    return false
   }
 }
 
@@ -126,6 +185,9 @@ function normalizeItems(raw) {
       lastSeen: typeof st.lastSeen === 'string' ? st.lastSeen : '',
       due: typeof st.due === 'string' ? st.due : '',
       streak: num(st.streak, 0, 9999, 0),
+      // 这道题属于哪门考试。旧数据没有 —— 宁可留空（不参与孤儿统计），
+      // 也不要靠 id 前缀去猜，导入题库的 id 是用户自己定的
+      exam: typeof st.exam === 'string' ? st.exam : '',
     }
   }
   return out
@@ -198,10 +260,8 @@ function migrate(raw) {
   return state
 }
 
-/** 读取并规范化整份状态 */
-export function loadState() {
-  const raw = safeGet()
-  if (!raw) return defaultState()
+/** 规范化整份状态（本地读取与导入备份共用同一条路径） */
+function normalizeState(raw) {
   const migrated = migrate(raw)
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -212,12 +272,104 @@ export function loadState() {
     log: normalizeLog(migrated.log),
     sessions: migrated.sessions && typeof migrated.sessions === 'object' ? migrated.sessions : {},
     imported: Array.isArray(migrated.imported) ? migrated.imported : [],
+    meta: normalizeMeta(migrated.meta),
   }
 }
 
-/** 保存；返回 false 表示写失败（仅内存态可用） */
+/** 读取并规范化整份状态 */
+export function loadState() {
+  return loadStateWithRecovery().state
+}
+
+/** 主键在、校验也过，但做题记录被整段抹掉了 —— 同样按损坏处理 */
+function itemsWiped(raw, normalized) {
+  const before = raw && raw.items && typeof raw.items === 'object' ? Object.keys(raw.items).length : 0
+  return before > 0 && Object.keys(normalized.items).length === 0
+}
+
+/**
+ * 读取状态，并在存档损坏时回滚到上一份快照。
+ *
+ * @returns {{ state: object, recoveredFrom: null|'bak'|'failed', hasBackup: boolean }}
+ *   recoveredFrom: 'bak' = 已用快照恢复；'failed' = 主键与快照都不可用，只能给默认状态
+ */
+export function loadStateWithRecovery() {
+  const raw = safeGetRaw(KEY)
+  const bakRaw = safeGetRaw(BAK_KEY)
+  const hasBackup = Boolean(bakRaw) && isIntact(bakRaw)
+
+  // 主键不存在：可能是新用户，也可能是用户自己清空了。
+  // 刻意**不**自动用快照 —— 「清空全部进度」必须一次就干净；
+  // 想要快照的人可以在进度页手动「用快照恢复」。
+  if (!raw) return { state: defaultState(), recoveredFrom: null, hasBackup }
+
+  let parsed = null
+  if (isIntact(raw)) {
+    try {
+      parsed = JSON.parse(raw)
+    } catch {
+      parsed = null
+    }
+  }
+
+  if (parsed) {
+    const state = normalizeState(parsed)
+    if (!itemsWiped(parsed, state)) return { state, recoveredFrom: null, hasBackup }
+  }
+
+  // 主键坏了（或记录被洗空）：先把原文留档，否则下一次写盘会把它当成快照轮转掉
+  try {
+    window.localStorage.setItem(CORRUPT_KEY, raw)
+  } catch {
+    /* 留档失败不影响回滚 */
+  }
+  if (hasBackup) {
+    try {
+      return { state: normalizeState(JSON.parse(bakRaw)), recoveredFrom: 'bak', hasBackup: true }
+    } catch {
+      /* 快照也坏了，走下面的兜底 */
+    }
+  }
+  return { state: defaultState(), recoveredFrom: 'failed', hasBackup }
+}
+
+/** 手动读取上一份快照（进度页的「用快照恢复」） */
+export function loadBackupState() {
+  const bakRaw = safeGetRaw(BAK_KEY)
+  if (!bakRaw || !isIntact(bakRaw)) return null
+  try {
+    const parsed = JSON.parse(bakRaw)
+    return {
+      state: normalizeState(parsed),
+      savedAt: typeof parsed._savedAt === 'string' ? parsed._savedAt : '',
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * 保存；返回 false 表示写失败（仅内存态可用）。
+ *
+ * 写入前会把"当前这份**校验通过**的主键"留作快照 —— 校验是刻意的：
+ * 只有确认上一份是好数据，才值得覆盖现有快照。
+ */
 export function saveState(state) {
-  return safeSet(state)
+  if (typeof window === 'undefined') return false
+  const previous = safeGetRaw(KEY)
+  if (previous && isIntact(previous)) {
+    try {
+      window.localStorage.setItem(BAK_KEY, previous)
+    } catch {
+      /* 快照写不进去（配额满）不该挡住主写入 */
+    }
+  }
+  try {
+    window.localStorage.setItem(KEY, pack(state))
+    return true
+  } catch {
+    return false
+  }
 }
 
 /** 导出为可读 JSON 字符串 */
@@ -259,6 +411,7 @@ export function importState(text) {
     items: normalizeItems(parsed.items),
     log: normalizeLog(parsed.log),
     diagnostic: normalizeDiagnostic(parsed.diagnostic),
+    meta: normalizeMeta(parsed.meta),
   }
   return { ok: true, state: merged }
 }

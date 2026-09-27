@@ -6,8 +6,10 @@ import {
   normalizedWeights,
 } from '../data/hcip/examConfig'
 import {
-  loadState,
+  loadStateWithRecovery,
   saveState,
+  probeStorage,
+  loadBackupState,
   defaultState,
   defaultSettings,
   exportState,
@@ -60,7 +62,19 @@ async function loadSeedQuestions(examCode) {
    状态
    ============================================================ */
 
-const state = reactive(loadState())
+/**
+ * 启动即做一次带恢复的读取：主键被写坏时能自己回到上一份快照，
+ * 而不是给用户一个空进度（那才是最伤人的失败模式）。
+ */
+const boot = loadStateWithRecovery()
+const state = reactive(boot.state)
+
+/** 本机存储是否真的能写（隐私模式、配额满、被清理过的环境当场为 false） */
+const storageOk = ref(probeStorage())
+/** null | 'bak' | 'failed'：本次启动是否发生过恢复 */
+const recoveredFrom = ref(boot.recoveredFrom || null)
+/** 是否存在可用的上一份快照（进度页据此显示「用快照恢复」） */
+const hasBackup = ref(Boolean(boot.hasBackup))
 
 /** 已加载的题目（种子 + 用户导入），按 exam 分桶 */
 const questionsByExam = shallowRef({})
@@ -99,6 +113,15 @@ let flushQueued = false
 let lastSaveOk = ref(true)
 
 /**
+ * flush 之后的回调（同步模块用它感知"本地又写了一次盘"）。
+ * 用注册回调而不是让同步模块反向 import 本模块 —— 那样会形成循环依赖。
+ */
+let afterFlush = null
+export function setAfterFlushHook(fn) {
+  afterFlush = typeof fn === 'function' ? fn : null
+}
+
+/**
  * 日志压缩的落盘时机。
  *
  * deep watch 只要看到**引用变化**就会重新入队，所以如果 flush() 每次都把
@@ -115,6 +138,7 @@ function flush() {
   }
 
   lastSaveOk.value = saveState(state)
+  if (afterFlush) afterFlush(lastSaveOk.value)
 }
 
 function queueFlush() {
@@ -175,13 +199,16 @@ async function loadImported(examCode) {
   importedLoaded = true
 }
 
-/** 覆盖式保存导入题库，并刷新合并列表 */
+/** 覆盖式保存导入题库，并刷新合并列表；返回 false 表示没能写进本机存储 */
 export function saveImported(examCode, list, meta) {
   importedByExam.value = { ...importedByExam.value, [examCode]: list }
+  let ok = true
   if (typeof window !== 'undefined') {
     try {
       window.localStorage.setItem(IMPORT_KEY_PREFIX + examCode, JSON.stringify(list))
     } catch {
+      ok = false
+      // 写不进去必须让上层看见：否则用户以为导入成功，刷新后题库却没了
       lastSaveOk.value = false
     }
   }
@@ -196,6 +223,7 @@ export function saveImported(examCode, list, meta) {
     ...questionsByExam.value,
     [examCode]: [...seed, ...list],
   }
+  return ok
 }
 
 export function getImported(examCode = currentExam.value) {
@@ -273,6 +301,22 @@ const domainStats = computed(() => {
   return out
 })
 
+/**
+ * 孤儿记录：items 里有、当前题库里却找不到的条目。
+ *
+ * 三个刻意的限制：
+ *   · 只统计**打了当前考试标记**的记录 —— 另一门考试的题、以及旧数据里
+ *     没有 exam 字段的记录都不算，否则会把有效进度整片误判成垃圾。
+ *   · 题库没加载完（bankStatus !== 'ready'）时一律为空，那时所有题都"不存在"。
+ *   · 只报告不自动删，删不删由用户在进度页决定。
+ */
+const orphanItems = computed(() => {
+  if (bankStatus.value !== 'ready') return []
+  const exam = currentExam.value
+  const known = questionIndex.value
+  return Object.keys(state.items).filter((id) => state.items[id]?.exam === exam && !known.has(id))
+})
+
 const progress = computed(() => {
   const total = questions.value.length
   const touchedCount = questions.value.filter((q) => touched(q.id)).length
@@ -281,8 +325,19 @@ const progress = computed(() => {
     touched: touchedCount,
     unseen: total - touchedCount,
     rate: total ? touchedCount / total : 0,
+    orphan: orphanItems.value.length,
   }
 })
+
+/** 清掉孤儿记录，返回删除条数（题库未就绪时不动手） */
+export function pruneOrphans() {
+  const ids = orphanItems.value
+  if (!ids.length) return 0
+  const next = { ...state.items }
+  for (const id of ids) delete next[id]
+  state.items = next
+  return ids.length
+}
 
 /** 今日到期复习题（含逾期），按保留率升序 */
 const dueQuestions = computed(() => {
@@ -360,7 +415,8 @@ export function answerQuestion(q, result, opts = {}) {
   const target = state.settings.targetRetention
   const prev = state.items[q.id] || null
   const next = applyAnswer(prev, result, { dateKey: dk, target })
-  state.items[q.id] = next
+  // 打上考试标记：孤儿检测必须知道这条记录属于哪门考试
+  state.items[q.id] = { ...next, exam: q.exam || currentExam.value }
 
   const mode = opts.mode || 'new'
   bumpLog({
@@ -402,7 +458,7 @@ export function saveDiagnostic({ exam, domainScore, details, answers }) {
     if (!q) continue
     // 已有记忆状态的题不被摸底覆盖（用户可能已经学过一段时间）
     if (state.items[d.id]) continue
-    state.items[d.id] = seedFromDiagnostic(d.ok, dk, target)
+    state.items[d.id] = { ...seedFromDiagnostic(d.ok, dk, target), exam: q.exam || currentExam.value }
   }
   state.diagnostic = {
     completedAt: new Date().toISOString(),
@@ -450,11 +506,29 @@ export function clearSession(key) {
 }
 
 /* ============================================================
-   备份
+   备份与恢复
    ============================================================ */
 
+/** 记下"刚刚把备份交到用户手里了"，进度页据此提醒多久没备份 */
+export function markBackupDone() {
+  state.meta = { ...state.meta, lastBackupAt: new Date().toISOString() }
+}
+
 export function doExport() {
-  return exportState(state)
+  const text = exportState(state)
+  // 导出即视为一次备份（下载/复制的成功与否由调用方处理，这里不做二次猜测）
+  markBackupDone()
+  return text
+}
+
+/** 用上一份快照覆盖当前进度（用户显式动作） */
+export function restoreFromBak() {
+  const bak = loadBackupState()
+  if (!bak) return { ok: false, error: '没有可用的上一份快照' }
+  Object.assign(state, bak.state)
+  lastSaveOk.value = saveState(state)
+  recoveredFrom.value = 'bak'
+  return { ok: true, savedAt: bak.savedAt }
 }
 
 export function doImport(text) {
@@ -471,6 +545,7 @@ export function resetAll() {
   fresh.activeExam = currentExam.value
   Object.assign(state, fresh)
   lastSaveOk.value = saveState(state)
+  recoveredFrom.value = null
 }
 
 /* ============================================================
@@ -513,6 +588,9 @@ export function useStudyStore() {
     clearSession,
     doExport,
     doImport,
+    restoreFromBak,
+    pruneOrphans,
+    markBackupDone,
     resetAll,
     refreshDay,
     ensureBankLoaded,
@@ -520,6 +598,9 @@ export function useStudyStore() {
     getImported,
     // 元信息
     saveOk: lastSaveOk,
+    storageOk,
+    recoveredFrom,
+    hasBackup,
     storageBytes: computed(() => estimateSize(state)),
     examMeta: computed(() => getExam(currentExam.value)),
   }

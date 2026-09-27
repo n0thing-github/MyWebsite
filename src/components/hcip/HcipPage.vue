@@ -5,6 +5,7 @@ import { useStudyStore } from '../../study/useStudyStore'
 import { useStudyPlan } from '../../study/useStudyPlan'
 import TabBar from './TabBar.vue'
 import StudyTopBar from './StudyTopBar.vue'
+import StorageBar from './StorageBar.vue'
 import DiagnosticView from './DiagnosticView.vue'
 import DashboardView from './DashboardView.vue'
 import QuizRunner from './QuizRunner.vue'
@@ -100,6 +101,10 @@ watch(
       :forecast="forecast"
       :weak-count="weakDomains.length"
     />
+
+    <!-- 写盘失败/刚做过恢复时，在**所有标签页**顶部常驻提示：
+         这类问题不能藏在「进度」页最底部，用户看不到就等于没有 -->
+    <StorageBar />
 
     <div class="hcip-body">
       <!-- 注意：store 是普通对象，其内部 ref 在模板里**不会**自动解包，

@@ -262,11 +262,11 @@ export function parseImport(text, format, examCode, getExisting) {
   return { ok: errors.length === 0, accepted, errors, duplicates, total: raw.length }
 }
 
-/** 把解析结果落库 */
+/** 把解析结果落库；返回 false 表示没能写进本机存储 */
 export function commitImport(list, examCode, meta) {
   const store = useStudyStore()
   const prev = store.getImported(examCode)
-  store.saveImported(examCode, [...prev, ...list], meta)
+  return store.saveImported(examCode, [...prev, ...list], meta)
 }
 
 /** 从文件名猜格式 */

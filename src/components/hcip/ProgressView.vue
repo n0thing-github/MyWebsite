@@ -5,7 +5,8 @@ import { useStudyPlan } from '../../study/useStudyPlan'
 import { suggestedOrder } from '../../study/studyOrder'
 import { masteryLevel } from '../../study/memory'
 import { EXAM_SEQUENCE, getExam } from '../../data/hcip/examConfig'
-import { formatDateFullCN, formatMinutes, lastNDaysKey } from '../../study/dateUtil'
+import { formatDateFullCN, formatMinutes, lastNDaysKey, toDateKey, today, daysBetween } from '../../study/dateUtil'
+import { downloadText, backupFilename, copyText } from '../../study/backupFile'
 import { Chip, ProgressBar, Sheet, StatCard } from './ui'
 import ImportPanel from './ImportPanel.vue'
 
@@ -81,21 +82,44 @@ const stageStyles = [
 
 function doExport() {
   const text = store.doExport()
-  try {
-    const blob = new Blob([text], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `hcip-backup-${store.dateKey.value}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    setTimeout(() => URL.revokeObjectURL(url), 2000)
-  } catch {
-    // 下载被拦截时退化为复制到剪贴板，至少让用户拿得到数据
-    if (navigator.clipboard) navigator.clipboard.writeText(text)
-  }
+  const how = downloadText(text, backupFilename(store.dateKey.value))
+  importMsg.value =
+    how === 'download'
+      ? '备份已导出'
+      : how === 'clipboard'
+        ? '下载被拦截，备份内容已复制到剪贴板'
+        : '导出失败：当前环境既不能下载也不能复制'
 }
+
+/** 复制而不是下载：微信内置浏览器里下载常被拦，剪贴板是主要退路 */
+function doCopyBackup() {
+  importMsg.value = copyText(store.doExport()) ? '备份内容已复制到剪贴板' : '复制失败，请改用「导出进度」'
+}
+
+function doRestoreBak() {
+  const res = store.restoreFromBak()
+  importMsg.value = res.ok ? '已用上一份快照恢复' : res.error
+}
+
+function doPrune() {
+  const n = store.pruneOrphans()
+  importMsg.value = n ? `已清理 ${n} 条失效记录` : '没有可清理的记录'
+}
+
+/** 上次备份距今多少天（没备份过返回 null） */
+const backupDays = computed(() => {
+  const at = store.state.meta?.lastBackupAt
+  if (!at) return null
+  const key = toDateKey(new Date(at))
+  return key ? daysBetween(key, today()) : null
+})
+const backupText = computed(() => {
+  if (backupDays.value === null) return '还没备份过'
+  if (backupDays.value <= 0) return '上次备份：今天'
+  return `上次备份：${backupDays.value} 天前`
+})
+/** 超过一周没备份就提醒 —— 手机浏览器随时可能被清 */
+const backupStale = computed(() => backupDays.value === null || backupDays.value > 7)
 
 const importMsg = ref('')
 function onImportBackup(evt) {
@@ -306,12 +330,24 @@ const storageKB = computed(() => Math.round(store.storageBytes.value / 1024))
       <div class="btn-row">
         <Chip @click="importOpen = true">导入题库</Chip>
         <Chip @click="doExport">导出进度</Chip>
+        <Chip @click="doCopyBackup">复制备份</Chip>
       </div>
       <label class="file-btn">
         <input type="file" accept=".json" @change="onImportBackup" />
         <span>从备份恢复</span>
       </label>
+      <Chip v-if="store.hasBackup.value" @click="doRestoreBak">用上一份快照恢复</Chip>
       <p v-if="importMsg" class="ok-msg">{{ importMsg }}</p>
+
+      <p class="note no-border" :class="{ 'is-stale': backupStale }">
+        {{ backupText }}。数据只在这台设备的浏览器里，换设备、清缓存前先导出一份 ——
+        手机浏览器（尤其微信内置）随时可能被清空。
+      </p>
+
+      <p v-if="store.progress.value.orphan" class="note no-border">
+        有 {{ store.progress.value.orphan }} 条记录在当前题库里已经找不到（多为导入题库被清空后的残留），
+        它们会让统计对不上。<button class="link-btn" @click="doPrune">清理这些记录</button>
+      </p>
 
       <p v-if="!store.saveOk.value" class="warn-msg">
         无法写入本机存储（可能是隐私模式或空间已满）。当前进度只保存在内存，
@@ -618,5 +654,22 @@ const storageKB = computed(() => Math.round(store.storageBytes.value / 1024))
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--cyan);
+}
+
+/* 超过一周没备份：用强调色把它从"说明文字"里提出来 */
+.note.is-stale {
+  color: var(--red-bright);
+}
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0 2px;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 </style>
